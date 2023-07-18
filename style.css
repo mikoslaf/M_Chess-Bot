@@ -1,0 +1,66 @@
+.contener {
+    border: 3px solid #231d1f;
+    display: flex;
+    flex-wrap: wrap;
+    width: 600px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.field {
+    width: 12.5%;
+    height: 12.5%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.white {
+    background-color: white;
+}
+
+.black {
+    background-color:#769656;
+}
+
+.flagged {
+    color: rgb(253, 0, 0);
+}
+
+.a11 {
+    background-image: url("./img/11.svg");
+}
+.a12 {
+    background-image: url("./img/12.svg");
+}
+.a13 {
+    background-image: url("./img/13.svg");
+}
+.a14 {
+    background-image: url("./img/14.svg");
+}
+.a15 {
+    background-image: url("./img/15.svg");
+}
+.a16 {
+    background-image: url("./img/16.svg");
+}
+.a21 {
+    background-image: url("./img/21.svg");
+}
+.a22 {
+    background-image: url("./img/22.svg");
+}
+.a23 {
+    background-image: url("./img/23.svg");
+}
+.a24 {
+    background-image: url("./img/24.svg");
+}
+.a25 {
+    background-image: url("./img/25.svg");
+}
+.a26 {
+    background-image: url("./img/26.svg");
+}
