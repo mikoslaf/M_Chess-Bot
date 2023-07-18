@@ -13,10 +13,10 @@
 let map = {
     8: [24,23,22,25,26,22,23,24],
     7: [21,21,21,21,21,21,21,21],
-    6: [0,0,0,0,0,0,0,0],
-    5: [0,0,0,21,0,0,0,0],
-    4: [0,0,0,11,0,0,0,0],
-    3: [0,0,0,0,0,0,0,0],
+    6: [0,0,22,0,22,0,0,0],
+    5: [0,0,22,21,22,0,0,0],
+    4: [0,0,11,11,11,0,0,0],
+    3: [0,0,11,0,11,0,0,0],
     2: [11,11,11,11,11,11,11,11],
     1: [14,13,12,15,16,12,13,14]
 };
@@ -41,40 +41,50 @@ $(function() {
         const pawn = map[id[0]][parseInt(id[1].charCodeAt(0)) - 65];  
         //const index = parseInt(id[0]) + parseInt(id[1].charCodeAt(0)) - 65
         console.log(pawn + " | " + id);
-        move_option("14", id);
+        move_option("16", id);
     });
 });
 
 function move_option(pawn, localization) 
 {
     let tocheck = []
-    //if(pawn[1] != 1) pawn = pawn[0];
     let index = localization[1].charCodeAt(0) - 65;
     switch(parseInt(pawn[1])) 
     {
         case 6:
-            let index6 = localization[1].charCodeAt(0);
             if(localization[0] != 8) 
             {
-                tocheck.push(parseInt(localization[0]) + 1 + (index6 - 65).toString());
+                if(map[parseInt(localization[0]) + 1][index].toString()[0] != pawn[0]) 
+                    tocheck.push(parseInt(localization[0]) + 1 + index.toString());
             }
             if(localization[0] != 1) 
             {
-                tocheck.push(localization[0] - 1 + (index6 - 65).toString()); 
+                if(map[parseInt(localization[0]) - 1][index].toString()[0] != pawn[0])
+                    tocheck.push(localization[0] - 1 + index.toString()); 
             }
-            if(index6 != 65)
+            if(index < 7)
             {
-                const down = (index6 - 66).toString();
-                tocheck.push(localization[0] + down);
-                if(localization[0] != "8")  tocheck.push(parseInt(localization[0]) + 1 + down);
-                if(localization[0] != "1")  tocheck.push(localization[0] - 1 + down);
+                const down = (index + 1).toString();
+                if(map[localization[0]][down].toString()[0] != pawn[0]) 
+                    tocheck.push(localization[0] + down);
+                if(localization[0] != 8)  
+                    if(map[parseInt(localization[0]) + 1][down].toString()[0] != pawn[0]) 
+                        tocheck.push(parseInt(localization[0]) + 1 + down);
+                if(localization[0] != 1)
+                    if(map[localization[0] - 1][down].toString()[0] != pawn[0]) 
+                        tocheck.push(localization[0] - 1 + down);
             }
-            if(index6 != 72)
+            if(index > 0)
             {
-                const up = (index6 - 64).toString(); 
-                tocheck.push(localization[0] + up);
-                if(localization[0] != "8")  tocheck.push(parseInt(localization[0]) + 1 + up);
-                if(localization[0] != "1")  tocheck.push(localization[0] - 1 + up);
+                const up = (index - 1).toString(); 
+                if(map[localization[0]][up].toString()[0] != pawn[0]) 
+                    tocheck.push(localization[0] + up);
+                if(localization[0] != 8)  
+                    if(map[parseInt(localization[0]) + 1][up].toString()[0] != pawn[0]) 
+                        tocheck.push(parseInt(localization[0]) + 1 + up);
+                if(localization[0] != 1)
+                    if(map[localization[0] - 1][up].toString()[0] != pawn[0]) 
+                        tocheck.push(localization[0] - 1 + up);
             }
             break;
         case 4:
@@ -139,7 +149,6 @@ function move_option(pawn, localization)
             for (let i = index-1; i >= 0; i--) {
                 if(map[localization[0]][i] != 0)
                 {
-                    // console.log(Math.floor(map[localization[0]][i]/10))
                     if(map[localization[0]][i].toString()[0] != pawn[0])
                         tocheck.push(localization[0] + i);
                     break;
