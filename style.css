@@ -17,6 +17,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: transparent;
 }
 
 .field div {
@@ -25,7 +26,7 @@
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.3);
     text-align: center;
-    color: transparent;
+
 }
 
 .white {
