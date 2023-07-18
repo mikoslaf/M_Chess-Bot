@@ -13,15 +13,15 @@
 let map = {
     8: [24,23,22,25,26,22,23,24],
     7: [21,21,21,21,21,21,21,21],
-    6: [0,0,22,0,22,0,0,0],
-    5: [0,0,22,21,22,0,0,0],
-    4: [0,0,11,11,11,0,0,0],
-    3: [0,0,11,0,11,0,0,0],
+    6: [0,0,0,0,0,0,0,0],
+    5: [0,0,0,0,0,0,0,0],
+    4: [0,0,0,12,0,0,0,0],
+    3: [0,0,0,0,0,0,0,0],
     2: [11,11,11,11,11,11,11,11],
     1: [14,13,12,15,16,12,13,14]
 };
-
-
+let move = 0 // 0 - player, 1 - bot
+let clicked_position = 0;
 
 $(function() {
 
@@ -38,12 +38,32 @@ $(function() {
 
     $(".field").on("click", (e) => {
         const id = e.target.id;
-        const pawn = map[id[0]][parseInt(id[1].charCodeAt(0)) - 65];  
-        //const index = parseInt(id[0]) + parseInt(id[1].charCodeAt(0)) - 65
-        console.log(pawn + " | " + id);
-        move_option("16", id);
+        if(id == ""){
+            move_pawn(e.target.className[0] + e.target.className[1])
+        }
+        else 
+        {
+            const pawn = map[id[0]][parseInt(id[1].charCodeAt(0)) - 65];  
+            console.log(pawn + " | " + id);
+            move_option(pawn.toString(), id); 
+        }
     });
 });
+
+function move_pawn(position) 
+{
+    let pawn = map[clicked_position[0]][clicked_position[1]]
+    map[clicked_position[0]][clicked_position[1]] = 0
+
+    if(map[position[0]][position[1]] != 0)
+        $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).removeClass("a"+map[position[0]][position[1]]);
+    map[position[0]][position[1]] = pawn
+
+    $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
+    $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).addClass("a"+pawn);
+    clicked_position = 0
+    show_options()
+}
 
 function move_option(pawn, localization) 
 {
@@ -164,7 +184,7 @@ function move_option(pawn, localization)
                 }
                 tocheck.push(localization[0] + i);
             }
-            for (let i = parseInt(localization[0]) - 1; i >= 0; i--) {
+            for (let i = parseInt(localization[0]) - 1; i > 0; i--) {
                 if(map[i][index] != 0)
                 {
                     if(map[i][index].toString()[0] != pawn[0])
@@ -173,7 +193,7 @@ function move_option(pawn, localization)
                 }
                 tocheck.push(i + index.toString());
             }
-            for (let i = parseInt(localization[0]) + 1; i <= 8; i++) {
+            for (let i = parseInt(localization[0]) + 1; i < 8; i++) {
                 if(map[i][index] != 0)
                 {
                     if(map[i][index].toString()[0] != pawn[0])
@@ -184,7 +204,7 @@ function move_option(pawn, localization)
             }
         case 2:
             for (let i = 1; i < 8; i++) {
-                if(localization[0] - i >= 0 && index - i >= 0)
+                if(localization[0] - i > 0 && index - i >= 0)
                 {
                     if(map[localization[0] - i][index - i] != 0) 
                     {
@@ -201,7 +221,7 @@ function move_option(pawn, localization)
                 
             }
             for (let i = 1; i < 8; i++) {
-                if(localization[0] - i >= 0 && index + i < 8)
+                if(localization[0] - i > 0 && index + i < 8)
                 {
                     if(map[localization[0] - i][index + i] != 0) 
                     {
@@ -255,30 +275,47 @@ function move_option(pawn, localization)
             if(pawn[0] == "1")
             {
                 if(map[parseInt(localization[0]) + 1][index] == 0) tocheck.push(parseInt(localization[0]) + 1 + index.toString());
-                if(map[parseInt(localization[0]) + 1][index - 1].toString()[0] == "2") tocheck.push(parseInt(localization[0]) + 1 + (index - 1).toString());
-                if(map[parseInt(localization[0]) + 1][index + 1].toString()[0] == "2") tocheck.push(parseInt(localization[0]) + 1 + (index + 1).toString());
+                if(index != 0)
+                    if(map[parseInt(localization[0]) + 1][index - 1].toString()[0] == "2") 
+                        tocheck.push(parseInt(localization[0]) + 1 + (index - 1).toString());
+                if(index != 7)
+                    if(map[parseInt(localization[0]) + 1][index + 1].toString()[0] == "2") 
+                        tocheck.push(parseInt(localization[0]) + 1 + (index + 1).toString());
             } 
             else
             {
                 if(map[parseInt(localization[0]) - 1][index] == 0) tocheck.push(localization[0] - 1 + index.toString());
-                if(map[parseInt(localization[0]) - 1][index - 1].toString()[0] != "1") tocheck.push(localization[0] - 1 + (index - 1).toString());
-                if(map[parseInt(localization[0]) - 1][index + 1].toString()[0] != "1") tocheck.push(localization[0] - 1 + (index + 1).toString());
+                if(index != 0)
+                    if(map[parseInt(localization[0]) - 1][index - 1].toString()[0] == "1") 
+                        tocheck.push(localization[0] - 1 + (index - 1).toString());
+                if(index != 7)
+                    if(map[parseInt(localization[0]) - 1][index + 1].toString()[0] == "1") 
+                        tocheck.push(localization[0] - 1 + (index + 1).toString());
             }
             break;
     }
 
     console.log(tocheck)
+    clicked_position = parseInt(localization[0]) + index.toString()
     show_options(tocheck)
 }
 let flagged = []
-function show_options(check) 
+function show_options(check = []) 
 {
     flagged.forEach(element => {
-        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).removeClass("flagged");
+        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html(element[0]+String.fromCharCode(parseInt(element[1]) + 65));
     });
 
     flagged = check
     check.forEach(element => {
-        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).addClass("flagged");
+        console.log(map[element[0]][element[1]].toString());
+        if(map[element[0]][element[1]] != 0) 
+        {
+            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class='"+element+" flags'>"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)+"</div>"); 
+        } 
+        else 
+        {
+            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class = '"+element+"'>"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)+"</div>");  
+        }
     });
 }

@@ -14,6 +14,18 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: 100% 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.field div {
+    width: 55%;
+    height: 55%;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+    text-align: center;
+    color: transparent;
 }
 
 .white {
@@ -24,8 +36,14 @@
     background-color:#769656;
 }
 
-.flagged {
-    color: rgb(253, 0, 0);
+
+.field .flag {
+    text-align: center;
+    width: 65%;
+    height: 65%;
+    border-radius: 50%;
+    background: none;
+    border: 1vw solid rgba(0, 0, 0, 0.3);
 }
 
 .a11 {
