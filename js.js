@@ -14,8 +14,8 @@ let map = {
     8: [24,23,22,25,26,22,23,24],
     7: [21,21,21,21,21,21,21,21],
     6: [0,0,0,0,0,0,0,0],
-    5: [0,0,0,0,0,0,0,0],
-    4: [0,0,0,0,0,0,0,0],
+    5: [0,0,0,21,0,0,0,0],
+    4: [0,0,0,11,0,0,0,0],
     3: [0,0,0,0,0,0,0,0],
     2: [11,11,11,11,11,11,11,11],
     1: [14,13,12,15,16,12,13,14]
@@ -41,7 +41,7 @@ $(function() {
         const pawn = map[id[0]][parseInt(id[1].charCodeAt(0)) - 65];  
         //const index = parseInt(id[0]) + parseInt(id[1].charCodeAt(0)) - 65
         console.log(pawn + " | " + id);
-        move_option("25", id);
+        move_option("14", id);
     });
 });
 
@@ -78,16 +78,41 @@ function move_option(pawn, localization)
             }
             break;
         case 4:
-            for (let i = 0; i < index; i++) {
+            for (let i = index-1; i >= 0; i--) {
+                if(map[localization[0]][i] != 0)
+                {
+                    // console.log(Math.floor(map[localization[0]][i]/10))
+                    if(map[localization[0]][i].toString()[0] != pawn[0])
+                        tocheck.push(localization[0] + i);
+                    break;
+                }
                 tocheck.push(localization[0] + i);
             }
             for (let i = index + 1; i < 8; i++) {
+                if(map[localization[0]][i] != 0)
+                {
+                    if(map[localization[0]][i].toString()[0] != pawn[0])
+                        tocheck.push(localization[0] + i);
+                    break;
+                }
                 tocheck.push(localization[0] + i);
             }
-            for (let i = 1; i < parseInt(localization[0]); i++) {
+            for (let i = parseInt(localization[0]) - 1; i > 0; i--) {
+                if(map[i][index] != 0)
+                {
+                    if(map[i][index].toString()[0] != pawn[0])
+                        tocheck.push(i + index.toString());
+                    break;
+                }
                 tocheck.push(i + index.toString());
             }
             for (let i = parseInt(localization[0]) + 1; i <= 8; i++) {
+                if(map[i][index] != 0)
+                {
+                    if(map[i][index].toString()[0] != pawn[0])
+                        tocheck.push(i + index.toString());
+                    break;
+                }
                 tocheck.push(i + index.toString());
             }
             break;
@@ -106,55 +131,133 @@ function move_option(pawn, localization)
             options.forEach(element => {
                 if(element[1] != "-")
                     if($("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).length)
-                        tocheck.push(element)
+                        if(map[element[0]][element[1]].toString()[0] != pawn[0])
+                            tocheck.push(element)
             });
             break;
         case 5:
-            for (let i = 0; i < index; i++) {
+            for (let i = index-1; i >= 0; i--) {
+                if(map[localization[0]][i] != 0)
+                {
+                    // console.log(Math.floor(map[localization[0]][i]/10))
+                    if(map[localization[0]][i].toString()[0] != pawn[0])
+                        tocheck.push(localization[0] + i);
+                    break;
+                }
                 tocheck.push(localization[0] + i);
             }
             for (let i = index + 1; i < 8; i++) {
+                if(map[localization[0]][i] != 0)
+                {
+                    if(map[localization[0]][i].toString()[0] != pawn[0])
+                        tocheck.push(localization[0] + i);
+                    break;
+                }
                 tocheck.push(localization[0] + i);
             }
-            for (let i = 1; i < parseInt(localization[0]); i++) {
+            for (let i = parseInt(localization[0]) - 1; i >= 0; i--) {
+                if(map[i][index] != 0)
+                {
+                    if(map[i][index].toString()[0] != pawn[0])
+                        tocheck.push(i + index.toString());
+                    break;
+                }
                 tocheck.push(i + index.toString());
             }
             for (let i = parseInt(localization[0]) + 1; i <= 8; i++) {
+                if(map[i][index] != 0)
+                {
+                    if(map[i][index].toString()[0] != pawn[0])
+                        tocheck.push(i + index.toString());
+                    break;
+                }
                 tocheck.push(i + index.toString());
             }
         case 2:
             for (let i = 1; i < 8; i++) {
                 if(localization[0] - i >= 0 && index - i >= 0)
+                {
+                    if(map[localization[0] - i][index - i] != 0) 
+                    {
+                        if(map[localization[0] - i][index - i].toString()[0] != pawn[0])
+                            tocheck.push(localization[0] - i + (index - i).toString());
+                        break
+                    }
                     tocheck.push(localization[0] - i + (index - i).toString());
+                } 
+                else 
+                { 
+                    break 
+                }
+                
             }
             for (let i = 1; i < 8; i++) {
-                if(localization[0] - i >= 0 && index + i <= 8)
+                if(localization[0] - i >= 0 && index + i < 8)
+                {
+                    if(map[localization[0] - i][index + i] != 0) 
+                    {
+                        console.log(localization[0] - i)
+                        console.log(index + i)
+                        if(map[localization[0] - i][index + i].toString()[0] != pawn[0])
+                            tocheck.push(localization[0] - i + (index + i).toString());
+                        break
+                    }
                     tocheck.push(localization[0] - i + (index + i).toString());
+                }
+                else 
+                { 
+                    break 
+                }
             }
             for (let i = 1; i < 8; i++) {
-                if(parseInt(localization[0]) + i <= 8 && index + i <= 8)
+                if(parseInt(localization[0]) + i <= 8 && index + i < 8)
+                {
+                    if(map[parseInt(localization[0]) + i][index + i] != 0) 
+                    {
+                        if(map[parseInt(localization[0]) + i][index + i].toString()[0] != pawn[0])
+                        tocheck.push(parseInt(localization[0]) + i + (index + i).toString());
+                        break
+                    }
                     tocheck.push(parseInt(localization[0]) + i + (index + i).toString());
+                }
+                else 
+                { 
+                    break 
+                }
             }
             for (let i = 1; i < 8; i++) {
                 if(parseInt(localization[0]) + i <= 8 && index - i >= 0)
+                {
+                    if(map[parseInt(localization[0]) + i][index - i] != 0) 
+                    {
+                        if(map[parseInt(localization[0]) + i][index - i].toString()[0] != pawn[0])
+                        tocheck.push(parseInt(localization[0]) + i + (index - i).toString());
+                        break
+                    }
                     tocheck.push(parseInt(localization[0]) + i + (index - i).toString());
+                }
+                else 
+                { 
+                    break 
+                }
             }
             break;
         case 1:
             if(pawn[0] == "1")
             {
-                tocheck.push(parseInt(localization[0]) + 1 + index.toString());
-                tocheck.push(parseInt(localization[0]) + 1 + (index - 1).toString());
-                tocheck.push(parseInt(localization[0]) + 1 + (index + 1).toString());
+                if(map[parseInt(localization[0]) + 1][index] == 0) tocheck.push(parseInt(localization[0]) + 1 + index.toString());
+                if(map[parseInt(localization[0]) + 1][index - 1].toString()[0] == "2") tocheck.push(parseInt(localization[0]) + 1 + (index - 1).toString());
+                if(map[parseInt(localization[0]) + 1][index + 1].toString()[0] == "2") tocheck.push(parseInt(localization[0]) + 1 + (index + 1).toString());
             } 
             else
             {
-                tocheck.push(localization[0] - 1 + index.toString());
-                tocheck.push(localization[0] - 1 + (index - 1).toString());
-                tocheck.push(localization[0] - 1 + (index + 1).toString());
+                if(map[parseInt(localization[0]) - 1][index] == 0) tocheck.push(localization[0] - 1 + index.toString());
+                if(map[parseInt(localization[0]) - 1][index - 1].toString()[0] != "1") tocheck.push(localization[0] - 1 + (index - 1).toString());
+                if(map[parseInt(localization[0]) - 1][index + 1].toString()[0] != "1") tocheck.push(localization[0] - 1 + (index + 1).toString());
             }
             break;
     }
+
     console.log(tocheck)
     show_options(tocheck)
 }
