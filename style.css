@@ -1,3 +1,8 @@
+body {
+    margin: auto;
+    padding: auto;
+}
+
 .contener {
     border: 3px solid #231d1f;
     display: flex;
@@ -58,7 +63,7 @@
     }
 }
 .menu {
-    width: 100%;
+    width: 95%;
     display: flex;
     justify-content: center;
     padding: 2.5%;
