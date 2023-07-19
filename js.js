@@ -15,19 +15,18 @@ let map = {
     7: [21,21,21,21,21,21,21,21],
     6: [0,0,0,0,0,0,0,0],
     5: [0,0,0,0,0,0,0,0],
-    4: [0,0,0,12,0,0,0,0],
+    4: [0,0,0,0,0,0,0,0],
     3: [0,0,0,0,0,0,0,0],
     2: [11,11,11,11,11,11,11,11],
     1: [14,13,12,15,16,12,13,14]
 };
 let move = 0 // 0 - player, 1 - bot
 let clicked_position = 0;
-
+let players = false
 $(function() {
 
     for(let i=8;i>0;i--)
     {
-        console.log(i)
         $.each(map[i],(j, val) => {
             if (val != 0)
             {
@@ -48,6 +47,54 @@ $(function() {
             move_option(pawn.toString(), id); 
         }
     });
+
+    $(".2players").on("click", () => {
+        players = true
+        for(let i = 1; i < 7; i++)
+            $(".a2"+i).css({"transform": "rotateX(180deg)"});
+    });
+
+    $(".Reset").on("click", () => {
+        map = {
+            8: [24,23,22,25,26,22,23,24],
+            7: [21,21,21,21,21,21,21,21],
+            6: [0,0,0,0,0,0,0,0],
+            5: [0,0,0,0,0,0,0,0],
+            4: [0,0,0,0,0,0,0,0],
+            3: [0,0,0,0,0,0,0,0],
+            2: [11,11,11,11,11,11,11,11],
+            1: [14,13,12,15,16,12,13,14]
+        };
+
+        players = false
+
+        for(let i = 1; i < 7; i++)
+            $(".a2"+i).css({"transform": "rotateX(0deg)"});
+
+        let color = "white"
+        
+        for(let i=8;i>0;i--)
+        {
+            $.each(map[i],(j, val) => {
+                if (val != 0)
+                {
+                    $(".contener").children(".field").eq(8 * (8 - i) + j).removeClass().addClass("field").addClass(color).addClass("a"+val).html("");
+                }
+                else 
+                {
+                    $(".contener").children(".field").eq(8 * (8 - i) + j).removeClass().addClass("field").addClass(color).html("");
+                }
+                if(color == "white") 
+                    color = "black" 
+                else 
+                    color = "white"
+            });
+            if(color == "white") 
+                color = "black" 
+            else 
+                color = "white"
+        }
+    });
 });
 
 function move_pawn(position) 
@@ -61,6 +108,13 @@ function move_pawn(position)
 
     $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
     $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).addClass("a"+pawn);
+    if(players)
+    {
+        if(pawn.toString()[0] == "2")
+        {
+            $(".a"+pawn).css({"transform": "rotateX(180deg)"}); 
+        }
+    }
     clicked_position = 0
     show_options()
 }
@@ -225,8 +279,6 @@ function move_option(pawn, localization)
                 {
                     if(map[localization[0] - i][index + i] != 0) 
                     {
-                        console.log(localization[0] - i)
-                        console.log(index + i)
                         if(map[localization[0] - i][index + i].toString()[0] != pawn[0])
                             tocheck.push(localization[0] - i + (index + i).toString());
                         break
@@ -295,7 +347,6 @@ function move_option(pawn, localization)
             break;
     }
 
-    console.log(tocheck)
     clicked_position = parseInt(localization[0]) + index.toString()
     show_options(tocheck)
 }
@@ -308,10 +359,9 @@ function show_options(check = [])
 
     flagged = check
     check.forEach(element => {
-        console.log(map[element[0]][element[1]].toString());
         if(map[element[0]][element[1]] != 0) 
         {
-            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class='"+element+" flags'>"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)+"</div>"); 
+            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class='"+element+" flag'>"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)+"</div>"); 
         } 
         else 
         {
