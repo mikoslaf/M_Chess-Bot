@@ -15,12 +15,34 @@ let map = {
     7: [21,21,21,21,21,21,21,21],
     6: [0,0,0,0,0,0,0,0],
     5: [0,0,0,0,0,0,0,0],
-    4: [0,0,0,0,0,0,0,0],
+    4: [0,0,0,0,14,0,0,0],
     3: [0,0,0,0,0,0,0,0],
     2: [11,11,11,11,11,11,11,11],
     1: [14,13,12,15,16,12,13,14]
 };
-let move = 0 // 0 - player, 1 - bot
+
+let map_aw = { //attack white
+    8: [0,0,0,0,0,0,0,0],
+    7: [0,0,0,0,1,0,0,0],
+    6: [0,0,0,0,1,0,0,0],
+    5: [0,0,0,0,1,0,0,0],
+    4: [1,1,1,1,0,1,1,1],
+    3: [2,1,2,1,2,2,1,2],
+    2: [1,1,1,4,4,1,1,1],
+    1: [0,1,1,1,1,1,1,0]
+};
+
+let map_ab = { // attack black
+    8: [0,1,1,1,1,1,1,0],
+    7: [1,1,1,4,4,1,1,1],
+    6: [2,1,2,1,1,2,1,2],
+    5: [0,0,0,0,0,0,0,0],
+    4: [0,0,0,0,0,0,0,0],
+    3: [0,0,0,0,0,0,0,0],
+    2: [0,0,0,0,0,0,0,0],
+    1: [0,0,0,0,0,0,0,0]
+}; 
+let move = 1 // 1 - player, 2 - bot/black player
 let clicked_position = 0;
 let players = false
 $(function() {
@@ -44,7 +66,16 @@ $(function() {
         {
             const pawn = map[id[0]][parseInt(id[1].charCodeAt(0)) - 65];  
             console.log(pawn + " | " + id);
-            move_option(pawn.toString(), id); 
+            if(players)
+            {
+                if(pawn.toString()[0] == move)
+                    move_option(pawn.toString(), id); 
+            }
+            else 
+            {
+                //if(move == 1) -- change this later
+                    move_option(pawn.toString(), id); 
+            }
         }
     });
 
@@ -67,12 +98,13 @@ $(function() {
         };
 
         players = false
+        move = 1
 
         for(let i = 1; i < 7; i++)
             $(".a2"+i).css({"transform": "rotateX(0deg)"});
 
         let color = "white"
-        
+
         for(let i=8;i>0;i--)
         {
             $.each(map[i],(j, val) => {
@@ -97,13 +129,56 @@ $(function() {
     });
 });
 
+function remove_postion(pawn, position) 
+{
+    const remove_postion = move_option(pawn, position[0]+String.fromCharCode(parseInt(position[1]) + 65), true)
+    if(pawn[1] == 1)
+    {
+        if(pawn[0] == 1)
+        {
+            if(parseInt(position[1]) != 0) map_aw[parseInt(position[0]) + 1][parseInt(position[1]) - 1]--;
+            if(parseInt(position[1]) != 7) map_aw[parseInt(position[0]) + 1][parseInt(position[1]) + 1]--;
+        }
+        else 
+        {
+            if(parseInt(position[1]) != 0) map_ab[position[0] - 1][parseInt(position[1]) - 1]--;
+            if(parseInt(position[1]) != 7) map_ab[position[0] - 1][parseInt(position[1]) + 1]--; 
+        }
+    }
+    else 
+    {
+        if(pawn[0] == 1)
+        {
+            remove_postion.forEach(element => {
+                map_aw[element[0]][element[1]]--;
+            });  
+        }
+        else 
+        {
+            remove_postion.forEach(element => {
+                map_ab[element[0]][element[1]]--;
+            });  
+        }
+    } 
+    console.log(map_aw)
+    console.log(map_ab)
+}
+
 function move_pawn(position) 
 {
     let pawn = map[clicked_position[0]][clicked_position[1]]
+
+    remove_postion(pawn.toString(), clicked_position)
+
     map[clicked_position[0]][clicked_position[1]] = 0
 
     if(map[position[0]][position[1]] != 0)
+    {
+        remove_postion(map[position[0]][position[1]].toString(), position)
+
         $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).removeClass("a"+map[position[0]][position[1]]);
+
+    }
     map[position[0]][position[1]] = pawn
 
     $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
@@ -115,14 +190,20 @@ function move_pawn(position)
             $(".a"+pawn).css({"transform": "rotateX(180deg)"}); 
         }
     }
+
     clicked_position = 0
+    if(move == 1) 
+        move = 2
+    else 
+        move = 1
     show_options()
 }
 
-function move_option(pawn, localization) 
+function move_option(pawn, localization, Wreturn = false) 
 {
     let tocheck = []
     let index = localization[1].charCodeAt(0) - 65;
+    //console.log(pawn + " || " + localization)
     switch(parseInt(pawn[1])) 
     {
         case 6:
@@ -326,6 +407,7 @@ function move_option(pawn, localization)
         case 1:
             if(pawn[0] == "1")
             {
+                if(localization[0] == 2 && map[parseInt(localization[0]) + 2][index] == 0) tocheck.push(parseInt(localization[0]) + 2 + index.toString());
                 if(map[parseInt(localization[0]) + 1][index] == 0) tocheck.push(parseInt(localization[0]) + 1 + index.toString());
                 if(index != 0)
                     if(map[parseInt(localization[0]) + 1][index - 1].toString()[0] == "2") 
@@ -336,6 +418,7 @@ function move_option(pawn, localization)
             } 
             else
             {
+                if(localization[0] == 7 && map[parseInt(localization[0]) - 2][index] == 0) tocheck.push(localization[0] - 2 + index.toString());
                 if(map[parseInt(localization[0]) - 1][index] == 0) tocheck.push(localization[0] - 1 + index.toString());
                 if(index != 0)
                     if(map[parseInt(localization[0]) - 1][index - 1].toString()[0] == "1") 
@@ -346,6 +429,8 @@ function move_option(pawn, localization)
             }
             break;
     }
+    if(Wreturn)
+        return tocheck
 
     clicked_position = parseInt(localization[0]) + index.toString()
     show_options(tocheck)
