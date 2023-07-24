@@ -167,7 +167,7 @@ function check(positions)
     // });  
 }
 
-function change_position(pawn, position, val = 1 ) 
+function change_position(pawn, position, val = 1) 
 {
     const positions = move_option(pawn, position[0]+String.fromCharCode(parseInt(position[1]) + 65), true)
     if(pawn[1] == 1)
@@ -201,12 +201,15 @@ function change_position(pawn, position, val = 1 )
 
     console.log(" ");
     const positions_check = move_option("15", position[0]+String.fromCharCode(parseInt(position[1]) + 65), true)
-    $.each(positions_check, function (index, val) { 
-        const poz = map[val[0]][val[1]].toString()[1]
+    $.each(positions_check, function (index, value) { 
+        const poz = map[value[0]][value[1]].toString()[1]
         if(poz == 5 || poz == 2 || poz == 4)
         {
             let positions_delete = []
             let pawn_check = check_pawn(positions_check[index - 1], positions_check[index], poz) 
+            console.log(positions_check.length)
+            if(pawn_check)
+                positions_delete.push(position)
             for(let i = 0; i < 8; i++)
             {
                 if(is_close(position, positions_check[index - i])) 
@@ -219,7 +222,7 @@ function change_position(pawn, position, val = 1 )
                 {
                     if(pawn_check)
                     {
-                        if(positions_check[index - i] != val)
+                        if(positions_check[index - i] != value)
                             positions_delete.push(positions_check[index - i]) 
                     }
                     else 
@@ -228,7 +231,26 @@ function change_position(pawn, position, val = 1 )
                     }
                 }
             }
+            if(positions_delete.length == 0 && check_pawn(position, positions_check[index], poz))
+                positions_delete.push(position)
+
+            
+            console.log(val)
             console.log(positions_delete)
+            if(pawn[0] == 1)
+            {
+                positions_delete.forEach(element => {
+                    map_aw[element[0]][element[1]] += val;
+                });  
+            }
+            else 
+            {
+                positions_delete.forEach(element => {
+                    map_ab[element[0]][element[1]] += val;
+                });  
+            }
+
+            // dodać dodwanie po skosie 
         }
     });
     // console.log(map_aw)
@@ -285,12 +307,12 @@ function move_pawn(position)
     else 
         move = 1
 
-    // for(let i=8;i>0;i--)
-    // {
-    //     $.each(map_ab[i],(j, val) => {
-    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-    //     });
-    // }
+    for(let i=8;i>0;i--)
+    {
+        $.each(map_ab[i],(j, val) => {
+                $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
+        });
+    }
     show_options()
 }
 
