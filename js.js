@@ -211,7 +211,6 @@ function change_position(pawn, position, val = 1, onlymove = true)
 
     if(onlymove)
     {
-        console.log(" ");
         const positions_check = move_option("15", position[0]+String.fromCharCode(parseInt(position[1]) + 65), true)
         $.each(positions_check, function (index, value) { 
             const poz = map[value[0]][value[1]].toString()
@@ -246,8 +245,6 @@ function change_position(pawn, position, val = 1, onlymove = true)
                 if(positions_delete.length == 0 && check_pawn(position, positions_check[index], poz[1]))
                     positions_delete.push(position)
 
-                console.log(val)
-                console.log(positions_delete)
                 if(poz[0] == 1)
                 {
                     positions_delete.forEach(element => {
@@ -269,33 +266,36 @@ function change_position(pawn, position, val = 1, onlymove = true)
     }
 }
 
-function change_position_2(position, positioncheck)
+function change_position_add(position, positioncheck)
 {
-    console.log(" ");
     const positions_check = move_option("15", position[0]+String.fromCharCode(parseInt(position[1]) + 65), true)
-    $.each(positions_check, function (index, value) { 
+    $.each(positions_check, function (_, value) { 
         const poz = map[value[0]][value[1]].toString()
         if(poz[1] == 5 || poz[1] == 2 || poz[1] == 4)
-        {
-            if(value != positioncheck) // poprawić to
+        {   
+            if(value != positioncheck)
             {
                 const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
-                
-                console.log(positions_delete)
-                if(poz[0] == 1)
+                // console.log(position)
+                // console.log(value)
+                // console.log(check_pawn(position, value, poz[1]))
+                if(!check_pawn(positions_delete[0], value, poz[1])) //|| check_pawn(position, value, poz[1]))
                 {
-                    positions_delete.forEach(element => {
-                        map_aw[element[0]][element[1]] += 1;
-                    });  
-                }
-                else 
-                {
-                    positions_delete.forEach(element => {
-                        map_ab[element[0]][element[1]] += 1;
-                    });  
+                    //console.log(positions_delete)
+                    if(poz[0] == 1)
+                    {
+                        positions_delete.forEach(element => {
+                            map_aw[element[0]][element[1]] += 1;
+                        });  
+                    }
+                    else 
+                    {
+                        positions_delete.forEach(element => {
+                            map_ab[element[0]][element[1]] += 1;
+                        });  
+                    }
                 }
             }
-            // dodać dodwanie po skosie 
         }
     });
 }
@@ -318,6 +318,7 @@ function check_pawn(x,y,pawn)
 function move_pawn(position) 
 {
     let pawn = map[clicked_position[0]][clicked_position[1]]
+    console.log(position)
 
     change_position(pawn.toString(), clicked_position, -1)
 
@@ -330,10 +331,14 @@ function move_pawn(position)
         $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).removeClass("a"+map[position[0]][position[1]]);
 
     }
+    else 
+    {
+        change_position(pawn.toString(), position) 
+    }
+
     map[position[0]][position[1]] = pawn
 
-    change_position_2(clicked_position, clicked_position)
-    change_position(pawn.toString(), position)
+    change_position_add(clicked_position, position)
 
     $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
     $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).addClass("a"+pawn);
