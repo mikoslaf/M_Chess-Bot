@@ -46,6 +46,8 @@ let move = 1 // 1 - player, 2 - bot/black player
 let clicked_position = 0;
 let players = false;
 let is_check = false;
+let w_king_position = "14";
+let b_king_position = "84";
 
 $(function() {
 
@@ -105,10 +107,10 @@ $(function() {
     $(".Reset").on("click", () => {
         map = {
             8: [24,23,22,25,26,22,23,24],
-            7: [0,21,21,21,21,21,21,21],
+            7: [21,21,21,21,21,21,21,21],
             6: [0,0,0,0,0,0,0,0],
-            5: [21,0,0,0,0,0,0,0],
-            4: [0,11,0,0,0,0,0,0],
+            5: [0,0,0,0,0,0,0,0],
+            4: [0,0,0,0,0,0,0,0],
             3: [0,0,0,0,0,0,0,0],
             2: [11,11,11,11,11,11,11,11],
             1: [14,13,12,15,16,12,13,14]
@@ -128,9 +130,9 @@ $(function() {
         map_ab = { // attack black
             8: [0,1,1,1,1,1,1,0],
             7: [1,1,1,4,4,1,1,1],
-            6: [3,1,3,2,2,3,2,2],
-            5: [1,0,0,0,0,0,0,0],
-            4: [0,1,0,0,0,0,0,0],
+            6: [2,2,3,2,2,3,2,2],
+            5: [0,0,0,0,0,0,0,0],
+            4: [0,0,0,0,0,0,0,0],
             3: [0,0,0,0,0,0,0,0],
             2: [0,0,0,0,0,0,0,0],
             1: [0,0,0,0,0,0,0,0]
@@ -168,13 +170,9 @@ $(function() {
     });
 });
 
-function check(positions) 
+function check_check(position) 
 {
-    // positions.forEach(element => {
-    //     if(map[element[0]][element[1]] == "26" || map[element[0]][element[1]] == "16")
-    //         alert("tes")
-    //         is_check = true
-    // });  
+
 }
 
 function change_position(pawn, position, val = 1) 
@@ -257,26 +255,13 @@ function change_position_add(positions)
     });
 }
 
-function is_close(x,y)
-{
-    const diff = Math.abs(x-y)
-    if(diff == 1 || diff == 10 || diff == 11 || diff == 9) return true
-    return false
-}
-
-function check_pawn(x,y,pawn)
-{
-    const diff = Math.abs(x-y)
-    if((diff == 1 || diff == 10) && (pawn == 5 || pawn == 4)) return true
-    if((diff == 11 || diff == 9) && (pawn == 5 || pawn == 2)) return true
-    return false
-}
-
 function move_pawn(position) 
 {
     let pawn = map[clicked_position[0]][clicked_position[1]]
 
     change_position(pawn.toString(), clicked_position, -1) // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
+    if(pawn != 16) change_position("16", w_king_position, -1)
+    if(pawn != 26) change_position("26", b_king_position, -1)
 
     if(map[position[0]][position[1]] != 0)
     {
@@ -286,19 +271,31 @@ function move_pawn(position)
 
     }
 
-    let changed = change_position_remove(clicked_position)
+    const changed = change_position_remove(clicked_position);
 
-    map[clicked_position[0]][clicked_position[1]] = 0
+    map[clicked_position[0]][clicked_position[1]] = 0;
 
-    changed.concat(change_position_remove(position, changed))
+    const changed2 = change_position_remove(position, changed);
 
-    map[position[0]][position[1]] = pawn
+    map[position[0]][position[1]] = pawn;
 
-    change_position(pawn.toString(), position)
-    change_position_add(changed)
+    change_position(pawn.toString(), position);
+    change_position_add(changed.concat(changed2));
 
     $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
     $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).addClass("a"+pawn);
+
+    if(pawn.toString()[1] == "6")
+    {
+        if(pawn.toString()[0] == "1")
+            w_king_position = position;
+        else
+            b_king_position = position
+    }
+
+    if(pawn != 16) change_position("16", w_king_position)
+    if(pawn != 26) change_position("26", b_king_position)
+
     if(players)
     {
         if(pawn.toString()[0] == "2")
@@ -330,18 +327,19 @@ function move_option(pawn, localization, Wreturn = false)
     switch(parseInt(pawn[1])) 
     {
         case 6:
+            let options2 = []
             if(localization[0] != 8) 
             {
                 if(map[parseInt(localization[0]) + 1][index].toString()[0] != pawn[0] || Wreturn) 
                     if(pawn[0] == "1")
                     {
                         if(map_ab[parseInt(localization[0]) + 1][index] == 0)
-                            tocheck.push(parseInt(localization[0]) + 1 + index.toString());
+                            options2.push(parseInt(localization[0]) + 1 + index.toString());
                     }
                     else
                     {
                         if(map_aw[parseInt(localization[0]) + 1][index] == 0)
-                            tocheck.push(parseInt(localization[0]) + 1 + index.toString());
+                            options2.push(parseInt(localization[0]) + 1 + index.toString());
                     }
             }
             if(localization[0] != 1) 
@@ -350,12 +348,12 @@ function move_option(pawn, localization, Wreturn = false)
                     if(pawn[0] == "1")
                     {
                         if(map_ab[localization[0] - 1][index] == 0)
-                            tocheck.push(localization[0] - 1 + index.toString());
+                            options2.push(localization[0] - 1 + index.toString());
                     }
                     else
                     {
                         if(map_aw[localization[0] - 1][index] == 0)
-                            tocheck.push(localization[0] - 1 + index.toString());
+                            options2.push(localization[0] - 1 + index.toString());
                     }
             }
             if(index < 7)
@@ -365,36 +363,36 @@ function move_option(pawn, localization, Wreturn = false)
                     if(pawn[0] == "1")
                     {
                         if(map_ab[localization[0]][down] == 0)
-                            tocheck.push(localization[0] + down);
+                            options2.push(localization[0] + down);
                     }
                     else
                     {
                         if(map_aw[localization[0]][down] == 0)
-                            tocheck.push(localization[0] + down);
+                            options2.push(localization[0] + down);
                     }
                 if(localization[0] != 8)  
                     if(map[parseInt(localization[0]) + 1][down].toString()[0] != pawn[0] || Wreturn) 
                         if(pawn[0] == "1")
                         {
                             if(map_ab[parseInt(localization[0]) + 1][down] == 0)
-                                tocheck.push(parseInt(localization[0]) + 1 + down);
+                                options2.push(parseInt(localization[0]) + 1 + down);
                         }
                         else
                         {
                             if(map_aw[parseInt(localization[0]) + 1][down] == 0)
-                                tocheck.push(parseInt(localization[0]) + 1 + down);
+                                options2.push(parseInt(localization[0]) + 1 + down);
                         }
                 if(localization[0] != 1)
                     if(map[localization[0] - 1][down].toString()[0] != pawn[0] || Wreturn)
                         if(pawn[0] == "1")
                         {
                             if(map_ab[localization[0] - 1][down] == 0)
-                                tocheck.push(localization[0] - 1 + down);
+                                options2.push(localization[0] - 1 + down);
                         }
                         else
                         {
                             if(map_aw[localization[0] - 1][down] == 0)
-                                tocheck.push(localization[0] - 1 + down);
+                                options2.push(localization[0] - 1 + down);
                         } 
             }
             if(index > 0)
@@ -404,37 +402,69 @@ function move_option(pawn, localization, Wreturn = false)
                     if(pawn[0] == "1")
                     {
                         if(map_ab[localization[0]][up] == 0)
-                            tocheck.push(localization[0] + up);
+                            options2.push(localization[0] + up);
                     }
                     else
                     {
                         if(map_aw[localization[0]][up] == 0)
-                            tocheck.push(localization[0] + up);
+                            options2.push(localization[0] + up);
                     } 
                 if(localization[0] != 8)  
                     if(map[parseInt(localization[0]) + 1][up].toString()[0] != pawn[0] || Wreturn)
                         if(pawn[0] == "1")
                         {
                             if(map_ab[parseInt(localization[0]) + 1][up] == 0)
-                                tocheck.push(parseInt(localization[0]) + 1 + up);
+                                options2.push(parseInt(localization[0]) + 1 + up);
                         }
                         else
                         {
                             if(map_aw[parseInt(localization[0]) + 1][up] == 0)
-                                tocheck.push(parseInt(localization[0]) + 1 + up);
+                                options2.push(parseInt(localization[0]) + 1 + up);
                         } 
                 if(localization[0] != 1)
                     if(map[localization[0] - 1][up].toString()[0] != pawn[0] || Wreturn) 
                         if(pawn[0] == "1")
                         {
                             if(map_ab[localization[0] - 1][up] == 0)
-                                tocheck.push(localization[0] - 1 + up);
+                                options2.push(localization[0] - 1 + up);
                         }
                         else
                         {
                             if(map_aw[localization[0] - 1][up] == 0)
-                                tocheck.push(localization[0] - 1 + up);
+                                options2.push(localization[0] - 1 + up);
                         } 
+            }
+            if(pawn[0] == "1" &&  map_ab[localization[0]][index] != 0)
+            {
+                map[localization[0]][index] = 0
+                const positions_check = move_option("15", localization, true)
+                $.each(positions_check, function (_, value) { 
+                    const poz = map[value[0]][value[1]].toString()
+                    if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] == 2)
+                    {   
+                        const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
+                        tocheck = options2.filter(value => !positions_delete.includes(value));
+                    }
+                });
+                map[localization[0]][index] = 16
+            }
+            else if(pawn[0] == "2" && map_aw[localization[0]][index] != 0)
+            {
+                map[localization[0]][index] = 0
+                const positions_check = move_option("25", localization, true)
+                $.each(positions_check, function (_, value) { 
+                    const poz = map[value[0]][value[1]].toString()
+                    if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] == 1)
+                    {   
+                        const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
+                        tocheck = options2.filter(value => !positions_delete.includes(value));
+                    }
+                });
+                map[localization[0]][index] = 26
+            }
+            else
+            {
+                tocheck = options2
             }
             break;
         case 4:
@@ -634,7 +664,7 @@ let flagged = []
 function show_options(options = []) 
 {
     flagged.forEach(element => {
-        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html(element[0]+String.fromCharCode(parseInt(element[1]) + 65));
+        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html();
     });
 
     flagged = options
@@ -648,4 +678,14 @@ function show_options(options = [])
             $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class = '"+element+"'>"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)+"</div>");  
         }
     });
+
+    for(let i=8;i>0;i--)
+    {
+        $.each(map[i],(j, val) => {
+            if (val != 0)
+            {
+                $(".contener").children(".field").eq(8 * (8 - i) + j).addClass("a"+val);
+            }
+        });
+    }
 }
