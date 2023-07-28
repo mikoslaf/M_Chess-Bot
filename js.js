@@ -50,6 +50,7 @@ let w_king_position = "14";
 let b_king_position = "84";
 let w_castling = [1,1] 
 let b_castling = [1,1] 
+let flagged = []
 
 $(function() {
 
@@ -141,6 +142,10 @@ $(function() {
         }; 
 
         players = false
+        w_king_position = "14";
+        b_king_position = "84";
+        w_castling = [1,1] 
+        b_castling = [1,1] 
         move = 1
 
         for(let i = 1; i < 7; i++)
@@ -261,31 +266,37 @@ function move_pawn(position)
 {
     let pawn = map[clicked_position[0]][clicked_position[1]]
 
-    change_position(pawn.toString(), clicked_position, -1) // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
-
     if(pawn != 16) change_position("16", w_king_position, -1)
     if(pawn != 26) change_position("26", b_king_position, -1)
 
+    change_position(pawn.toString(), clicked_position, -1) // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
+    $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
+
+    let delete_pawn = []
     if(map[position[0]][position[1]] != 0)
     {
         change_position(map[position[0]][position[1]].toString(), position, -1)
-
+        delete_pawn.push(position)
         $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).removeClass("a"+map[position[0]][position[1]]);
 
     }
 
-    const changed = change_position_remove(clicked_position);
+    const changed = change_position_remove(clicked_position, delete_pawn);
 
     map[clicked_position[0]][clicked_position[1]] = 0;
 
     const changed2 = change_position_remove(position, changed);
 
+    console.log(changed2)
+
+    if(pawn == 11 && position[0] == 8) pawn = 15
+    if(pawn == 21 && position[0] == 1) pawn = 25
     map[position[0]][position[1]] = pawn;
 
+    console.log(changed.concat(changed2).splice( $.inArray(position, changed) ,1 ))
     change_position(pawn.toString(), position);
     change_position_add(changed.concat(changed2));
 
-    $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
     $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).addClass("a"+pawn);
 
     if(pawn.toString()[1] == "6")
@@ -737,11 +748,11 @@ function move_option(pawn, localization, Wreturn = false)
     clicked_position = parseInt(localization[0]) + index.toString()
     show_options(tocheck)
 }
-let flagged = []
+
 function show_options(options = []) 
 {
     flagged.forEach(element => {
-        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html();
+        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html(); // add ""
     });
 
     flagged = options
