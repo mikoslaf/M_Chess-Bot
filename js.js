@@ -48,6 +48,8 @@ let players = false;
 let is_check = false;
 let w_king_position = "14";
 let b_king_position = "84";
+let w_castling = [1,1] 
+let b_castling = [1,1] 
 
 $(function() {
 
@@ -260,6 +262,7 @@ function move_pawn(position)
     let pawn = map[clicked_position[0]][clicked_position[1]]
 
     change_position(pawn.toString(), clicked_position, -1) // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
+
     if(pawn != 16) change_position("16", w_king_position, -1)
     if(pawn != 26) change_position("26", b_king_position, -1)
 
@@ -293,8 +296,55 @@ function move_pawn(position)
             b_king_position = position
     }
 
-    if(pawn != 16) change_position("16", w_king_position)
-    if(pawn != 26) change_position("26", b_king_position)
+    if(pawn != 16) {
+        change_position("16", w_king_position)
+        if(pawn == 14 && w_castling)
+        {
+            if(clicked_position[1] == 0)
+                w_castling[0] = 0
+            else if(clicked_position[1] == 7)
+                w_castling[1] = 0
+        }
+    }
+    else if(w_castling) 
+    {
+        if(position == 12 && w_castling[0] == 1)
+        {
+            clicked_position = "10"
+            move_pawn("13")
+        }
+        else if(position == 16 && w_castling[1] == 1)
+        {
+            clicked_position = "17"
+            move_pawn("15")
+        }
+        w_castling = false 
+    }
+
+    if(pawn != 26) {
+        change_position("26", b_king_position)
+        if(pawn == 24 && b_castling)
+        {
+            if(clicked_position[1] == 0)
+                b_castling[0] = 0
+            else if(clicked_position[1] == 7)
+                b_castling[1] = 0
+        }
+    }
+    else if(b_castling)
+    {
+        if(position == 82 && b_castling[0] == 1)
+        {
+            clicked_position = "80"
+            move_pawn("83")
+        }
+        else if(position == 86 && b_castling[1] == 1)
+        {
+            clicked_position = "87"
+            move_pawn("85")
+        }
+        b_castling = false 
+    }
 
     if(players)
     {
@@ -434,6 +484,33 @@ function move_option(pawn, localization, Wreturn = false)
                                 options2.push(localization[0] - 1 + up);
                         } 
             }
+            if(!Wreturn)
+            {
+                if(pawn[0] == "1")
+                {
+                    if(w_castling[0] == 1 && map[1][1] == 0 && map[1][2] == 0 && map[1][3] == 0)
+                    {
+                        options2.push("12")
+                    }
+                    if(w_castling[1] == 1 && map[1][5] == 0 && map[1][5] == 0)
+                    {
+                        options2.push("16")
+                    }
+                }
+                else
+                {
+                    if(b_castling[0] == 1 && map[8][1] == 0 && map[8][2] == 0 && map[8][3] == 0)
+                    {
+                        options2.push("82")
+                    }
+                    if(b_castling[1] == 1 && map[8][5] == 0 && map[8][5] == 0)
+                    {
+                        options2.push("86")
+                    }
+                }
+            }
+
+
             if(pawn[0] == "1" &&  map_ab[localization[0]][index] != 0)
             {
                 map[localization[0]][index] = 0
