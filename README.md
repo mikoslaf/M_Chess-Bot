@@ -1,3 +1,3 @@
 # Chess 
 The work still in progress.
-https://mikoslaf.github.io/Chess/
+https://mikoslaf.github.io/M_Chess-AI/
