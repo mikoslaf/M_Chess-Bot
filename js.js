@@ -46,6 +46,7 @@ let move = 1 // 1 - player, 2 - bot/black player
 let clicked_position = 0;
 let players = false;
 let is_check = false;
+let check_moves = []
 let w_king_position = "14";
 let b_king_position = "84";
 let w_castling = [1,1] 
@@ -264,7 +265,7 @@ function change_position_add(positions)
 
 function move_pawn(position) 
 {
-    let pawn = map[clicked_position[0]][clicked_position[1]]
+    const pawn = map[clicked_position[0]][clicked_position[1]]
 
     if(pawn != 16) change_position("16", w_king_position, -1)
     if(pawn != 26) change_position("26", b_king_position, -1)
@@ -287,13 +288,11 @@ function move_pawn(position)
 
     const changed2 = change_position_remove(position, changed);
 
-    console.log(changed2)
-
     if(pawn == 11 && position[0] == 8) pawn = 15
     if(pawn == 21 && position[0] == 1) pawn = 25
+
     map[position[0]][position[1]] = pawn;
 
-    console.log(changed.concat(changed2).splice( $.inArray(position, changed) ,1 ))
     change_position(pawn.toString(), position);
     change_position_add(changed.concat(changed2));
 
@@ -357,6 +356,17 @@ function move_pawn(position)
         b_castling = false 
     }
 
+    if(map_aw[b_king_position[0]][b_king_position[1]] > 0)
+    {
+        is_check = true
+    }
+    else if(map_ab[w_king_position[0]][w_king_position[1]] > 0)
+    {
+        is_check = true
+    }
+    else if(is_check)
+        is_check = false
+
     if(players)
     {
         if(pawn.toString()[0] == "2")
@@ -383,7 +393,7 @@ function move_pawn(position)
 function move_option(pawn, localization, Wreturn = false) 
 {
     let tocheck = []
-    let index = localization[1].charCodeAt(0) - 65;
+    const index = localization[1].charCodeAt(0) - 65;
     //console.log(pawn + " || " + localization)
     switch(parseInt(pawn[1])) 
     {
@@ -503,7 +513,7 @@ function move_option(pawn, localization, Wreturn = false)
                     {
                         options2.push("12")
                     }
-                    if(w_castling[1] == 1 && map[1][5] == 0 && map[1][5] == 0)
+                    if(w_castling[1] == 1 && map[1][5] == 0 && map[1][6] == 0)
                     {
                         options2.push("16")
                     }
@@ -514,7 +524,7 @@ function move_option(pawn, localization, Wreturn = false)
                     {
                         options2.push("82")
                     }
-                    if(b_castling[1] == 1 && map[8][5] == 0 && map[8][5] == 0)
+                    if(b_castling[1] == 1 && map[8][5] == 0 && map[8][6] == 0)
                     {
                         options2.push("86")
                     }
@@ -531,7 +541,7 @@ function move_option(pawn, localization, Wreturn = false)
                     if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] == 2)
                     {   
                         const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
-                        tocheck = options2.filter(value => !positions_delete.includes(value));
+                        tocheck = options2.filter(value => (!positions_delete.includes(value) && !is_close(value, b_king_position)));
                     }
                 });
                 map[localization[0]][index] = 16
@@ -545,14 +555,17 @@ function move_option(pawn, localization, Wreturn = false)
                     if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] == 1)
                     {   
                         const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
-                        tocheck = options2.filter(value => !positions_delete.includes(value));
+                        tocheck = options2.filter(value => (!positions_delete.includes(value)  && !is_close(value, w_king_position)));
                     }
                 });
                 map[localization[0]][index] = 26
             }
             else
             {
-                tocheck = options2
+                if(pawn[0] == "1")
+                    tocheck = options2.filter(value => !is_close(value, b_king_position));
+                else 
+                    tocheck = options2.filter(value => !is_close(value, w_king_position));
             }
             break;
         case 4:
@@ -747,6 +760,13 @@ function move_option(pawn, localization, Wreturn = false)
 
     clicked_position = parseInt(localization[0]) + index.toString()
     show_options(tocheck)
+}
+
+function is_close(x,y)
+{
+    const diff = Math.abs(x-y)
+    if(diff == 1 || diff == 10 || diff == 11 || diff == 9) return true
+    return false
 }
 
 function show_options(options = []) 
