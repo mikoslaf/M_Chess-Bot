@@ -42,6 +42,10 @@ let map_ab = { // attack black
     2: [0,0,0,0,0,0,0,0],
     1: [0,0,0,0,0,0,0,0]
 }; 
+
+let AI_on = true // false
+let bot_pawns = ["80","81","82","83","84","85","86","87","70","71","72","73","74","75","76","77"];
+
 let move = 1 // 1 - player, 2 - bot/black player
 let clicked_position = 0;
 let players = false;
@@ -52,6 +56,14 @@ let b_king_position = "84";
 let w_castling = [1,1] 
 let b_castling = [1,1] 
 let flagged = []
+
+const pawn_value = {
+    1:1,
+    2:3,
+    3:3,
+    4:5,
+    5:9,
+}
 
 $(function() {
 
@@ -64,12 +76,12 @@ $(function() {
             }
         });
     }
-    // for(let i=8;i>0;i--)
-    // {
-    //     $.each(map_ab[i],(j, val) => {
-    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-    //     });
-    // }
+    for(let i=8;i>0;i--)
+    {
+        $.each(map_ab[i],(j, val) => {
+                $(".contener").children(".field").eq(8 * (8 - i) + j).html("");
+        });
+    }
     $(".field").on("click", (e) => {
         const id = e.target.id;
         if(id == ""){
@@ -86,25 +98,20 @@ $(function() {
             }
             else 
             {
-                //if(move == 1) -- change this later
+                //if(move == 1)
                     move_option(pawn.toString(), id); 
             }
         }
     });
 
     $(".2players").on("click", () => {
-        players = true
+        players = true;
         for(let i = 1; i < 7; i++)
             $(".a2"+i).css({"transform": "rotateX(180deg)"});
     });
 
     $(".Game").on("click", () => {
-        for(let i=8;i>0;i--)
-        {
-            $.each(map_aw[i],(j, val) => {
-                    $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-            });
-        }
+        AI_on = true;
     });
 
 
@@ -142,17 +149,18 @@ $(function() {
             1: [0,0,0,0,0,0,0,0]
         }; 
 
-        players = false
+        AI_on = false;
+        players = false;
         w_king_position = "14";
         b_king_position = "84";
-        w_castling = [1,1] 
-        b_castling = [1,1] 
-        move = 1
+        w_castling = [1,1]; 
+        b_castling = [1,1]; 
+        move = 1;
 
         for(let i = 1; i < 7; i++)
             $(".a2"+i).css({"transform": "rotateX(0deg)"});
 
-        let color = "white"
+        let color = "white";
 
         for(let i=8;i>0;i--)
         {
@@ -358,15 +366,42 @@ function move_pawn(position)
 
     if(map_aw[b_king_position[0]][b_king_position[1]] > 0)
     {
-        is_check = true
+        is_check = true;
+        $(".contener").css("border-color", "red");
     }
     else if(map_ab[w_king_position[0]][w_king_position[1]] > 0)
     {
-        is_check = true
+        is_check = true;
+        $(".contener").css("border-color", "red");
     }
     else if(is_check)
-        is_check = false
+    {
+        is_check = false;
+        $(".contener").css("border-color", "black");
+    }
 
+    if(AI_on)
+    {
+        if(pawn.toString()[0] == "2")
+        {
+            bot_pawns = jQuery.grep(bot_pawns, function(value) {
+                return value != clicked_position;
+            });
+            bot_pawns.push(position)
+        }
+        else if(delete_pawn.length > 0)
+        {
+            bot_pawns = jQuery.grep(bot_pawns, function(value) {
+                return value != delete_pawn[0];
+            });
+            find_move()
+        } 
+        else 
+        {
+            find_move()
+        }
+    }
+    
     if(players)
     {
         if(pawn.toString()[0] == "2")
@@ -377,16 +412,16 @@ function move_pawn(position)
 
     clicked_position = 0
     if(move == 1) 
-        move = 2
+        move = 2;
     else 
-        move = 1
+        move = 1;
 
-    for(let i=8;i>0;i--)
-    {
-        $.each(map_aw[i],(j, val) => {
-                $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-        });
-    }
+    // for(let i=8;i>0;i--)
+    // {
+    //     $.each(map_aw[i],(j, val) => {
+    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
+    //     });
+    // }
     show_options()
 }
 
@@ -772,7 +807,7 @@ function is_close(x,y)
 function show_options(options = []) 
 {
     flagged.forEach(element => {
-        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html(); // add ""
+        $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html(""); // add ""
     });
 
     flagged = options
@@ -796,4 +831,56 @@ function show_options(options = [])
             }
         });
     }
+}
+
+// AI section
+
+function find_move()
+{
+    let options = [] //1-10 Advancement of movement | from | to
+    let global_options = []
+    $.each(bot_pawns,(_, val) => {
+        const positions = move_option(map[val[0]][val[1]].toString(), val[0]+String.fromCharCode(parseInt(val[1]) + 65), true)
+        $.each(positions,(_, value) => {
+            const pawn = map[val[0]][val[1]].toString()
+            const target = map[value[0]][value[1]].toString()
+            global_options.push([val, value])
+            if(target[0] == 1)
+            {
+                if(map_aw[value[0]][value[1]] == 0)
+                {
+                    if(target[1] == 5)
+                        options.push([9, val, value])
+                    else 
+                        options.push([8, val, value])
+                }
+                else if(pawn_value[target[1]] > pawn_value[pawn[1]])
+                    {
+                        if(target[1] == 5 && pawn[1] != 5)
+                            options.push([9, val, value])
+                        else 
+                            options.push([7, val, value])
+                    }
+            }
+        });
+    });
+
+    if(options.length > 0 )
+        {
+            let naj = options[0]
+            Math.floor(Math.random() * 100);
+            for (let i = 1; i < options.length; i++) {
+                if(naj[0] < options[i][0])
+                    naj = options
+            }
+            clicked_position = naj[1]
+            move_pawn(naj[2])
+        }
+    else 
+        {
+            let los = Math.floor(Math.random() * global_options.length) - 1;
+            clicked_position = global_options[los][0]
+            move_pawn(global_options[los][1])
+        }
+    //console.log(options)
 }
