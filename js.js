@@ -43,7 +43,7 @@ let map_ab = { // attack black
     1: [0,0,0,0,0,0,0,0]
 }; 
 
-let AI_on = true // false
+let AI_on = false // false
 let bot_pawns = ["80","81","82","83","84","85","86","87","70","71","72","73","74","75","76","77"];
 
 let move = 1 // 1 - player, 2 - bot/black player
@@ -368,11 +368,13 @@ function move_pawn(position)
     {
         is_check = true;
         $(".contener").css("border-color", "red");
+        check_options(pawn.toString(), position);
     }
     else if(map_ab[w_king_position[0]][w_king_position[1]] > 0)
     {
         is_check = true;
         $(".contener").css("border-color", "red");
+        check_options(pawn.toString(), position);
     }
     else if(is_check)
     {
@@ -425,7 +427,69 @@ function move_pawn(position)
     show_options()
 }
 
-function move_option(pawn, localization, Wreturn = false) 
+function check_options(pawn, position)
+{
+    check_moves = []
+    if(pawn[0] == 2)
+    {
+        check_moves = move_option("16", w_king_position[0]+String.fromCharCode(parseInt(w_king_position[1]) + 65), false, true);
+        if(pawn[1] == 1 || pawn[1] == 3 || is_close(w_king_position, position))
+        {
+            check_moves.push(position);
+        }
+        else
+        {
+            const options = move_option(pawn, position[0]+String.fromCharCode(parseInt(position[1]) + 65), false, true);
+            let diff = 0
+            for (let i = options.length; i > 0; i--) 
+            {
+                if(diff > 0)
+                {
+                    check_moves.push(options[i])
+                    if(diff != Math.abs(options[i] - options[i-1]))
+                        break
+                }
+                else 
+                {
+                    if(options[i] == w_king_position)
+                        diff = Math.abs(options[i] - options[i-1])
+                }
+            }
+            check_moves.push(position);
+        }
+    }
+    else 
+    {
+        check_moves = move_option("26", b_king_position[0]+String.fromCharCode(parseInt(b_king_position[1]) + 65), false, true);
+        if(pawn[1] == 1 || pawn[1] == 3 || is_close(b_king_position, position))
+        {
+            check_moves.push(position);
+        }
+        else
+        {
+            const options = move_option(pawn, position[0]+String.fromCharCode(parseInt(position[1]) + 65), false, true);
+            let diff = 0
+            for (let i = options.length; i > 0; i--) 
+            {
+                if(diff > 0)
+                {
+                    check_moves.push(options[i])
+                    if(diff != Math.abs(options[i] - options[i-1]))
+                        break
+                }
+                else 
+                {
+                    if(options[i] == b_king_position)
+                        diff = Math.abs(options[i] - options[i-1])
+                }
+            }
+            check_moves.push(position);
+        }
+    }
+
+}
+
+function move_option(pawn, localization, Wreturn = false, return_move = false) 
 {
     let tocheck = []
     const index = localization[1].charCodeAt(0) - 65;
@@ -790,11 +854,19 @@ function move_option(pawn, localization, Wreturn = false)
             }
             break;
     }
-    if(Wreturn)
+    if(Wreturn || return_move)
         return tocheck
 
     clicked_position = parseInt(localization[0]) + index.toString()
-    show_options(tocheck)
+
+    if(is_check && !AI_on) // change this later
+    {
+        show_options(tocheck.filter(value => check_moves.includes(value)));
+    }
+    else
+    {
+        show_options(tocheck);
+    }
 }
 
 function is_close(x,y)
