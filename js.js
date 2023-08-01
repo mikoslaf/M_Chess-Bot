@@ -157,6 +157,11 @@ $(function() {
         b_castling = [1,1]; 
         move = 1;
 
+        check_moves = [];
+        is_check = false;
+        $(".contener").css("border-color", "black");
+
+        
         for(let i = 1; i < 7; i++)
             $(".a2"+i).css({"transform": "rotateX(0deg)"});
 
@@ -432,7 +437,6 @@ function check_options(pawn, position)
     check_moves = []
     if(pawn[0] == 2)
     {
-        check_moves = move_option("16", w_king_position, false, true);
         if(pawn[1] == 1 || pawn[1] == 3 || is_close(w_king_position, position))
         {
             check_moves.push(position);
@@ -457,10 +461,14 @@ function check_options(pawn, position)
             }
             check_moves.push(position);
         }
+        if(is_end(w_king_position, 1))
+        {
+            alert("czarni wygrali")
+            move = 3
+        }
     }
     else 
     {
-        check_moves = move_option("26", b_king_position, false, true);
         if(pawn[1] == 1 || pawn[1] == 3 || is_close(b_king_position, position))
         {
             check_moves.push(position);
@@ -485,8 +493,42 @@ function check_options(pawn, position)
             }
             check_moves.push(position);
         }
+
+        console.log(check_moves)
+        if(is_end(b_king_position, 2))
+        {
+            alert("biali wygrali")
+            move = 3
+        }
     }
 
+}
+
+function is_end(position, site)
+{
+    const king_moves = move_option(site + "6", position, false, true);
+    if(king_moves.length == 0)
+    {
+        $.each(map, function (i, tab) {
+            $.each(tab, function (j, val) {
+                if(val != 0)
+                {
+                    val = val.toString()
+                    if(val[0] == site)
+                    {
+                        const options = move_option(val, i.toString() + j, false, true);
+                        $.each(check_moves, function (_, value) { 
+                             if(options.includes(value))
+                                return false
+                        });
+                    }
+                }
+            });
+        });
+
+        return true
+    }
+    return false
 }
 
 function move_option(pawn, localization, Wreturn = false, return_move = false) 
@@ -868,7 +910,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
 
     clicked_position = parseInt(localization[0]) + index.toString()
 
-    if(is_check && !AI_on) // change this later
+    if(is_check && pawn[1] != 6) // change this later
     {
         show_options(tocheck.filter(value => check_moves.includes(value)));
     }
