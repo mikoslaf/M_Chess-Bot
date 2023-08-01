@@ -193,7 +193,7 @@ function check_check(position)
 
 function change_position(pawn, position, val = 1) 
 {
-    const positions = move_option(pawn, position[0]+String.fromCharCode(parseInt(position[1]) + 65), true)
+    const positions = move_option(pawn, position, true)
     if(pawn[1] == 1)
     {
         if(pawn[0] == 1)
@@ -226,14 +226,14 @@ function change_position(pawn, position, val = 1)
 
 function change_position_remove(position, changed = [])
 {
-    const positions_check = move_option("15", position[0]+String.fromCharCode(parseInt(position[1]) + 65), true)
+    const positions_check = move_option("15", position, true)
     let found = []
     $.each(positions_check, function (_, value) { 
         const poz = map[value[0]][value[1]].toString()
         if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && !changed.includes(value))
         {   
             found.push(value)
-            const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
+            const positions_delete = move_option(poz, value, true)
             if(poz[0] == 1)
             {
                 positions_delete.forEach(element => {
@@ -255,7 +255,7 @@ function change_position_add(positions)
 {
     $.each(positions, function (_, value) { 
         const pawn = map[value[0]][value[1]].toString()
-        const positions_add = move_option(pawn, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
+        const positions_add = move_option(pawn, value, true)
         if(pawn[0] == 1)
         {
             positions_add.forEach(element => {
@@ -432,14 +432,14 @@ function check_options(pawn, position)
     check_moves = []
     if(pawn[0] == 2)
     {
-        check_moves = move_option("16", w_king_position[0]+String.fromCharCode(parseInt(w_king_position[1]) + 65), false, true);
+        check_moves = move_option("16", w_king_position, false, true);
         if(pawn[1] == 1 || pawn[1] == 3 || is_close(w_king_position, position))
         {
             check_moves.push(position);
         }
         else
         {
-            const options = move_option(pawn, position[0]+String.fromCharCode(parseInt(position[1]) + 65), false, true);
+            const options = move_option(pawn, position, false, true);
             let diff = 0
             for (let i = options.length; i > 0; i--) 
             {
@@ -460,14 +460,14 @@ function check_options(pawn, position)
     }
     else 
     {
-        check_moves = move_option("26", b_king_position[0]+String.fromCharCode(parseInt(b_king_position[1]) + 65), false, true);
+        check_moves = move_option("26", b_king_position, false, true);
         if(pawn[1] == 1 || pawn[1] == 3 || is_close(b_king_position, position))
         {
             check_moves.push(position);
         }
         else
         {
-            const options = move_option(pawn, position[0]+String.fromCharCode(parseInt(position[1]) + 65), false, true);
+            const options = move_option(pawn, position, false, true);
             let diff = 0
             for (let i = options.length; i > 0; i--) 
             {
@@ -492,7 +492,16 @@ function check_options(pawn, position)
 function move_option(pawn, localization, Wreturn = false, return_move = false) 
 {
     let tocheck = []
-    const index = localization[1].charCodeAt(0) - 65;
+    let index;
+    if(/[A-H]/i.test(localization))
+    {
+        index = localization[1].charCodeAt(0) - 65;
+    }
+    else 
+    {
+        localization = localization.toString()
+        index = parseInt(localization[1])
+    }
     //console.log(pawn + " || " + localization)
     switch(parseInt(pawn[1])) 
     {
@@ -639,7 +648,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                     const poz = map[value[0]][value[1]].toString()
                     if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] == 2)
                     {   
-                        const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
+                        const positions_delete = move_option(poz, value, true)
                         tocheck = options2.filter(value => (!positions_delete.includes(value) && !is_close(value, b_king_position)));
                     }
                 });
@@ -653,7 +662,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                     const poz = map[value[0]][value[1]].toString()
                     if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] == 1)
                     {   
-                        const positions_delete = move_option(poz, value[0]+String.fromCharCode(parseInt(value[1]) + 65), true)
+                        const positions_delete = move_option(poz, value, true)
                         tocheck = options2.filter(value => (!positions_delete.includes(value)  && !is_close(value, w_king_position)));
                     }
                 });
@@ -912,7 +921,7 @@ function find_move()
     let options = [] //1-10 Advancement of movement | from | to
     let global_options = []
     $.each(bot_pawns,(_, val) => {
-        const positions = move_option(map[val[0]][val[1]].toString(), val[0]+String.fromCharCode(parseInt(val[1]) + 65), true)
+        const positions = move_option(map[val[0]][val[1]].toString(), val, false, true)
         $.each(positions,(_, value) => {
             const pawn = map[val[0]][val[1]].toString()
             const target = map[value[0]][value[1]].toString()
@@ -950,9 +959,9 @@ function find_move()
         }
     else 
         {
-            let los = Math.floor(Math.random() * global_options.length) - 1;
-            clicked_position = global_options[los][0]
-            move_pawn(global_options[los][1])
+            let los = Math.floor(Math.random() * global_options.length);
+            clicked_position = global_options[los][0];
+            move_pawn(global_options[los][1]);
         }
     //console.log(options)
 }
