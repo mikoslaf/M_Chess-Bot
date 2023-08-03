@@ -65,7 +65,23 @@ const pawn_value = {
     5:9,
 }
 
+$(window).resize(function () {
+    if($(document).width() < 600)
+    {
+        $(".contener").css("height", $(document).width());
+    }
+    else 
+    {
+        $(".contener").css("height", "600px");
+    }
+});
+
 $(function() {
+
+    if($(document).width() < 600)
+    {
+        $(".contener").css("height", $(document).width());
+    }
 
     for(let i=8;i>0;i--)
     {

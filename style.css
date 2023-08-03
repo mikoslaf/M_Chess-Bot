@@ -13,6 +13,17 @@ body {
     margin-right: auto;
 }
 
+@media screen and (max-width: 600px) {
+    .field .flag {
+        border: 1.5vw solid rgba(0, 0, 0, 0.3);  
+    }
+
+    .contener
+    {
+        width: calc(100% - 3vw);
+    }
+}
+
 .field {
     width: 12.5%;
     height: 12.5%;
@@ -58,11 +69,6 @@ body {
     }
 }
 
-@media screen and (max-width: 650px) {
-    .field .flag {
-        border: 1.5vw solid rgba(0, 0, 0, 0.3);  
-    }
-}
 .menu {
     width: 95%;
     display: flex;
