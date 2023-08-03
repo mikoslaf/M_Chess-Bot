@@ -509,29 +509,34 @@ function check_options(pawn, position)
 
 function is_end(position, site)
 {
+    console.log(check_moves)
     const king_moves = move_option(site + "6", position, false, true);
+    let found = true;
     if(king_moves.length == 0)
     {
         $.each(map, function (i, tab) {
+            if(!found) return;
             $.each(tab, function (j, val) {
                 if(val != 0)
                 {
-                    val = val.toString()
+                    if(!found) return;
+                    val = val.toString();
                     if(val[0] == site)
                     {
                         const options = move_option(val, i.toString() + j, false, true);
                         $.each(check_moves, function (_, value) { 
                              if(options.includes(value))
-                                return false
+                                found = false;
+                                return;
                         });
                     }
                 }
             });
         });
 
-        return true
+        return found;
     }
-    return false
+    return false;
 }
 
 function move_option(pawn, localization, Wreturn = false, return_move = false) 
@@ -658,7 +663,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                                 options2.push(localization[0] - 1 + up);
                         } 
             }
-            if(!Wreturn && !return_move)
+            if(!Wreturn && !return_move && !is_check)
             {
                 if(pawn[0] == "1")
                 {
@@ -696,6 +701,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                     {   
                         const positions_delete = move_option(poz, value, true)
                         tocheck = options2.filter(value => (!positions_delete.includes(value) && !is_close(value, b_king_position)));
+                        found = false;
                     }
                 });
                 if(found)
@@ -974,7 +980,9 @@ function find_move()
     let options = [] //1-10 Advancement of movement | from | to
     let global_options = []
     $.each(bot_pawns,(_, val) => {
-        const positions = move_option(map[val[0]][val[1]].toString(), val, false, true)
+        let positions = move_option(map[val[0]][val[1]].toString(), val, false, true);
+        if(is_check)
+            positions = positions.filter(value => check_moves.includes(value));
         $.each(positions,(_, value) => {
             const pawn = map[val[0]][val[1]].toString()
             const target = map[value[0]][value[1]].toString()
@@ -1012,9 +1020,13 @@ function find_move()
         }
     else 
         {
-            let los = Math.floor(Math.random() * global_options.length);
-            clicked_position = global_options[los][0];
-            move_pawn(global_options[los][1]);
+            console.log(global_options);
+            if(global_options.length > 0)
+            {
+                let los = Math.floor(Math.random() * global_options.length);
+                clicked_position = global_options[los][0];
+                move_pawn(global_options[los][1]); 
+            }
         }
     //console.log(options)
 }
