@@ -941,7 +941,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
     if(Wreturn || return_move)
         return tocheck 
 
-    clicked_position = parseInt(localization[0]) + index.toString()
+    clicked_position = parseInt(localization[0]) + index.toString();
 
     if(is_check && pawn[1] != 6) // change this later
     {
@@ -949,6 +949,48 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
     }
     else
     {
+        const positions_check = move_option("25", localization, true);
+        let found = [0,0];
+        $.each(positions_check, function (_, value) { 
+            const poz = map[value[0]][value[1]].toString();
+            if(((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] != pawn[0]) || (poz[0] == pawn[0] && poz[1] == 6))
+            {   
+                if(poz[0] == pawn[0])
+                    found[0] = 1;
+                else
+                    found[1] = 1;
+            }
+        });
+        if(found[0] == 1 && found[1] == 1)
+        {
+            map[localization[0]][index] = 0;
+            let options;
+            const result = [];
+            if(pawn[0] == 1)
+                options = move_option("15", w_king_position, true);
+            else 
+                options = move_option("15", b_king_position, true); 
+    
+            //console.log(options)
+            let diff = 0
+            for (let i = options.length; i > 0; i--) 
+            {
+                if(diff > 0)
+                {
+                    result.push(options[i])
+                    if(diff != Math.abs(options[i] - options[i-1]))
+                        break;
+                }
+                else 
+                {
+                    if(options[i] == w_king_position)
+                        diff = Math.abs(options[i] - options[i-1])
+                }
+            }
+
+            map[localization[0]][index] = pawn;
+        }
+
         show_options(tocheck);
     }
 }
