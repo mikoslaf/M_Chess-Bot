@@ -94,7 +94,7 @@ $(function() {
     }
     for(let i=8;i>0;i--)
     {
-        $.each(map_ab[i],(j, val) => {
+        $.each(map_ab[i],(j, _) => {
                 $(".contener").children(".field").eq(8 * (8 - i) + j).html("");
         });
     }
@@ -206,11 +206,6 @@ $(function() {
         }
     });
 });
-
-function check_check(position) 
-{
-
-}
 
 function change_position(pawn, position, val = 1) 
 {
@@ -443,12 +438,12 @@ function move_pawn(position, ignore = true)
   
     }
 
-    for(let i=8;i>0;i--)
-    {
-        $.each(map_aw[i],(j, val) => {
-                $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-        });
-    }
+    // for(let i=8;i>0;i--)
+    // {
+    //     $.each(map_aw[i],(j, val) => {
+    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
+    //     });
+    // }
     show_options()
 }
 
@@ -916,7 +911,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
         case 1:
             if(pawn[0] == "1")
             {
-                if(localization[0] == 2 && map[parseInt(localization[0]) + 2][index] == 0) tocheck.push(parseInt(localization[0]) + 2 + index.toString());
+                if(localization[0] == 2 && map[parseInt(localization[0]) + 2][index] == 0 && map[parseInt(localization[0]) + 1][index] == 0) tocheck.push(parseInt(localization[0]) + 2 + index.toString());
                 if(map[parseInt(localization[0]) + 1][index] == 0) tocheck.push(parseInt(localization[0]) + 1 + index.toString());
                 if(index != 0)
                     if(map[parseInt(localization[0]) + 1][index - 1].toString()[0] == "2") 
@@ -927,7 +922,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             } 
             else
             {
-                if(localization[0] == 7 && map[parseInt(localization[0]) - 2][index] == 0) tocheck.push(localization[0] - 2 + index.toString());
+                if(localization[0] == 7 && map[parseInt(localization[0]) - 2][index] == 0 && map[parseInt(localization[0]) - 1][index] == 0) tocheck.push(localization[0] - 2 + index.toString());
                 if(map[parseInt(localization[0]) - 1][index] == 0) tocheck.push(localization[0] - 1 + index.toString());
                 if(index != 0)
                     if(map[parseInt(localization[0]) - 1][index - 1].toString()[0] == "1") 
@@ -1034,11 +1029,11 @@ function show_options(options = [])
     options.forEach(element => {
         if(map[element[0]][element[1]] != 0) 
         {
-            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class='"+element+" flag'>"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)+"</div>"); 
+            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class='"+element+" flag'></div>"); 
         } 
         else 
         {
-            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class = '"+element+"'>"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)+"</div>");  
+            $("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).html("<div class = '"+element+"'></div>");  
         }
     });
 
@@ -1083,6 +1078,25 @@ function find_move()
                         else 
                             options.push([7, val, value])
                     }
+            }
+            else if(map_aw[value[0]][value[1]] == 0)
+            {
+                options.push([5, val, value]);
+            }
+            else if(map_aw[value[0]][value[1]] > 0)
+            {
+                if(map_ab[value[0]][value[1]] == map_aw[value[0]][value[1]])
+                    if(pawn[1] == 1)
+                        options.push([5, val, value]); 
+                    else 
+                        options.push([4, val, value]); 
+                else if(map_ab[value[0]][value[1]] > map_aw[value[0]][value[1]])
+                    if(pawn[1] == 5)
+                        options.push([1, val, value]); 
+                    else 
+                        options.push([5, val, value]); 
+                else 
+                    options.push([1, val, value]); 
             }
         });
     });
