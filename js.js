@@ -943,55 +943,77 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
 
     clicked_position = parseInt(localization[0]) + index.toString();
 
-    if(is_check && pawn[1] != 6) // change this later
+    if(is_check && pawn[1] != 6)
     {
         show_options(tocheck.filter(value => check_moves.includes(value)));
     }
     else
     {
-        const positions_check = move_option("25", localization, true);
-        let found = [0,0];
-        $.each(positions_check, function (_, value) { 
-            const poz = map[value[0]][value[1]].toString();
-            if(((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] != pawn[0]) || (poz[0] == pawn[0] && poz[1] == 6))
-            {   
-                if(poz[0] == pawn[0])
-                    found[0] = 1;
-                else
-                    found[1] = 1;
-            }
-        });
-        if(found[0] == 1 && found[1] == 1)
+        if(pawn[1] != 6)
         {
-            map[localization[0]][index] = 0;
-            let options;
-            const result = [];
-            if(pawn[0] == 1)
-                options = move_option("15", w_king_position, true);
-            else 
-                options = move_option("15", b_king_position, true); 
-    
-            //console.log(options)
-            let diff = 0
-            for (let i = options.length; i > 0; i--) 
+            const positions_check = move_option("25", localization, true);
+            let found = [0,0];
+            $.each(positions_check, function (_, value) { 
+                const poz = map[value[0]][value[1]].toString();
+                if(((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] != pawn[0]) || (poz[0] == pawn[0] && poz[1] == 6))
+                {   
+                    if(poz[0] == pawn[0])
+                        found[0] = 1;
+                    else
+                        found[1] = 1;
+                }
+            });
+            if(found[0] == 1 && found[1] == 1)
             {
-                if(diff > 0)
-                {
-                    result.push(options[i])
-                    if(diff != Math.abs(options[i] - options[i-1]))
-                        break;
-                }
+                map[localization[0]][index] = 0;
+                let options;
+                let result = [];
+                if(pawn[0] == 1)
+                    options = move_option("15", w_king_position, true);
                 else 
+                    options = move_option("15", b_king_position, true); 
+        
+                //console.log(options)
+                let diff = 0
+                for (let i = options.length - 1; i >= 0; i--) 
                 {
-                    if(options[i] == w_king_position)
-                        diff = Math.abs(options[i] - options[i-1])
+                    if(diff > 0)
+                    {
+                        result.push(options[i]);
+                        if(diff != Math.abs(options[i] - options[i-1]))
+                            if(result.includes(localization[0]+index))
+                                break;
+                            else 
+                                {
+                                    diff = 0;
+                                    result = [];
+                                }
+                    }
+                    else 
+                    {
+                        const field = map[options[i][0]][options[i][1]].toString();
+                        if(field[0] != pawn[0] && (field[1] == 5 || field[1] == 4 || field[1] == 2))
+                            diff = Math.abs(options[i] - options[i-1])
+                    }
                 }
+
+                result = jQuery.grep(result, function(value) 
+                {
+                    return value != localization[0]+index;
+                });
+
+                map[localization[0]][index] = pawn;
+                console.log(result);
+                if(result.length > 0)
+                    show_options(tocheck.filter(value => result.includes(value)));
+                else
+                    show_options(tocheck);
             }
-
-            map[localization[0]][index] = pawn;
+            else 
+                show_options(tocheck);
         }
-
-        show_options(tocheck);
+        else 
+            show_options(tocheck);
     }
 }
 
@@ -1039,7 +1061,7 @@ function find_move()
     let global_options = []
     $.each(bot_pawns,(_, val) => {
         let positions = move_option(map[val[0]][val[1]].toString(), val, false, true);
-        if(is_check)
+        if(is_check && map[val[0]][val[1]].toString()[1] != 6)
             positions = positions.filter(value => check_moves.includes(value));
         $.each(positions,(_, value) => {
             const pawn = map[val[0]][val[1]].toString()
@@ -1065,20 +1087,21 @@ function find_move()
         });
     });
 
+    // console.log(options);
+    // console.log(global_options);
     if(options.length > 0 )
         {
             let naj = options[0]
             Math.floor(Math.random() * 100);
             for (let i = 1; i < options.length; i++) {
-                if(naj[0] < options[i][0])
-                    naj = options
+                if(naj[0] < options[i][0] || (naj[0] == options[i][0] && Math.floor(Math.random() * 3) == 1))
+                    naj = options[i]
             }
             clicked_position = naj[1]
             move_pawn(naj[2])
         }
     else 
         {
-            console.log(global_options);
             if(global_options.length > 0)
             {
                 let los = Math.floor(Math.random() * global_options.length);
