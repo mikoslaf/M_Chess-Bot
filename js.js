@@ -50,6 +50,7 @@ let move = 1 // 1 - player, 2 - bot/black player
 let clicked_position = 0;
 let players = false;
 let is_check = false;
+let game_start = false;
 let check_moves = []
 let w_king_position = "14";
 let b_king_position = "84";
@@ -121,9 +122,12 @@ $(function() {
     });
 
     $(".2players").on("click", () => {
-        players = true;
-        for(let i = 1; i < 7; i++)
-            $(".a2"+i).css({"transform": "rotateX(180deg)"});
+        if(!AI_on)
+        {
+            players = true;
+            for(let i = 1; i < 7; i++)
+                $(".a2"+i).css({"transform": "rotateX(180deg)"});
+        }
     });
 
     $(".Game").on("click", () => {
@@ -171,7 +175,10 @@ $(function() {
         b_king_position = "84";
         w_castling = [1,1]; 
         b_castling = [1,1]; 
+        game_start = false; 
         move = 1;
+
+        block_buttons();
 
         check_moves = [];
         is_check = false;
@@ -206,6 +213,23 @@ $(function() {
         }
     });
 });
+
+function block_buttons()
+{
+    $(".Game").prop('disabled', game_start);
+    $(".2players").prop('disabled', game_start);
+
+    if(game_start)
+    {
+        $(".Game").addClass("button-discable");
+        $(".2players").addClass("button-discable"); 
+    }
+    else 
+    {
+        $(".Game").removeClass("button-discable");
+        $(".2players").removeClass("button-discable"); 
+    }
+}
 
 function change_position(pawn, position, val = 1) 
 {
@@ -289,6 +313,12 @@ function change_position_add(positions)
 
 function move_pawn(position, ignore = true) 
 {
+    if(!game_start) 
+    {
+        game_start = true;
+        block_buttons();
+    }
+
     let pawn = map[clicked_position[0]][clicked_position[1]]
 
     if(pawn != 16) change_position("16", w_king_position, -1)
@@ -438,12 +468,12 @@ function move_pawn(position, ignore = true)
   
     }
 
-    // for(let i=8;i>0;i--)
-    // {
-    //     $.each(map_aw[i],(j, val) => {
-    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-    //     });
-    // }
+    for(let i=8;i>0;i--)
+    {
+        $.each(map_aw[i],(j, val) => {
+                $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
+        });
+    }
     show_options()
 }
 
@@ -1046,6 +1076,7 @@ function show_options(options = [])
             }
         });
     }
+
 }
 
 // AI section
