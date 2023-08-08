@@ -468,12 +468,12 @@ function move_pawn(position, ignore = true)
   
     }
 
-    for(let i=8;i>0;i--)
-    {
-        $.each(map_aw[i],(j, val) => {
-                $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-        });
-    }
+    // for(let i=8;i>0;i--)
+    // {
+    //     $.each(map_aw[i],(j, val) => {
+    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
+    //     });
+    // }
     show_options()
 }
 
@@ -747,6 +747,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 });
                 if(found)
                     tocheck = options2.filter(value => !is_close(value, b_king_position));
+                console.log(options2);
                 map[localization[0]][index] = 16
             }
             else if(pawn[0] == "2" && map_aw[localization[0]][index] != 0)
