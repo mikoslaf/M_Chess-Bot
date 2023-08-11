@@ -600,30 +600,32 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             let options2 = []
             if(localization[0] != 8) 
             {
-                if(map[parseInt(localization[0]) + 1][index].toString()[0] != pawn[0] || Wreturn) 
+                const column = parseInt(localization[0]) + 1;
+                if(map[column][index].toString()[0] != pawn[0] || Wreturn) 
                     if(pawn[0] == "1")
                     {
-                        if(map_ab[parseInt(localization[0]) + 1][index] == 0)
-                            options2.push(parseInt(localization[0]) + 1 + index.toString());
+                        if(map_ab[column][index] == 0)
+                            options2.push(column + index.toString());
                     }
                     else
                     {
-                        if(map_aw[parseInt(localization[0]) + 1][index] == 0)
-                            options2.push(parseInt(localization[0]) + 1 + index.toString());
+                        if(map_aw[column][index] == 0)
+                            options2.push(column + index.toString());
                     }
             }
             if(localization[0] != 1) 
             {
-                if(map[localization[0] - 1][index].toString()[0] != pawn[0]  || Wreturn) 
+                const column = localization[0] - 1;
+                if(map[column][index].toString()[0] != pawn[0]  || Wreturn) 
                     if(pawn[0] == "1")
                     {
-                        if(map_ab[localization[0] - 1][index] == 0)
-                            options2.push(localization[0] - 1 + index.toString());
+                        if(map_ab[column][index] == 0)
+                            options2.push(column + index.toString());
                     }
                     else
                     {
-                        if(map_aw[localization[0] - 1][index] == 0)
-                            options2.push(localization[0] - 1 + index.toString());
+                        if(map_aw[column][index] == 0)
+                            options2.push(column + index.toString());
                     }
             }
             if(index < 7)
@@ -640,69 +642,82 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                         if(map_aw[localization[0]][down] == 0)
                             options2.push(localization[0] + down);
                     }
-                if(localization[0] != 8)  
-                    if(map[parseInt(localization[0]) + 1][down].toString()[0] != pawn[0] || Wreturn) 
+                if(localization[0] != 8)
+                    {
+                    const column = parseInt(localization[0]) + 1;
+                    if(map[column][down].toString()[0] != pawn[0] || Wreturn) 
                         if(pawn[0] == "1")
                         {
-                            if(map_ab[parseInt(localization[0]) + 1][down] == 0)
-                                options2.push(parseInt(localization[0]) + 1 + down);
+                            if(map_ab[column][down] == 0)
+                                options2.push(column + down);
                         }
                         else
                         {
-                            if(map_aw[parseInt(localization[0]) + 1][down] == 0)
-                                options2.push(parseInt(localization[0]) + 1 + down);
+                            if(map_aw[column][down] == 0)
+                                options2.push(column + down);
                         }
+                    }
                 if(localization[0] != 1)
-                    if(map[localization[0] - 1][down].toString()[0] != pawn[0] || Wreturn)
-                        if(pawn[0] == "1")
-                        {
-                            if(map_ab[localization[0] - 1][down] == 0)
-                                options2.push(localization[0] - 1 + down);
-                        }
-                        else
-                        {
-                            if(map_aw[localization[0] - 1][down] == 0)
-                                options2.push(localization[0] - 1 + down);
-                        } 
+                    {
+                        const column = localization[0] - 1;
+                        if(map[column][down].toString()[0] != pawn[0] || Wreturn)
+                            if(pawn[0] == "1")
+                            {
+                                if(map_ab[column][down] == 0)
+                                    options2.push(column + down);
+                            }
+                            else
+                            {
+                                if(map_aw[column][down] == 0)
+                                    options2.push(column + down);
+                            } 
+                    }
             }
             if(index > 0)
             {
                 const up = (index - 1).toString(); 
-                if(map[localization[0]][up].toString()[0] != pawn[0] || Wreturn) 
+                const column = localization[0];
+                if(map[column][up].toString()[0] != pawn[0] || Wreturn) 
                     if(pawn[0] == "1")
                     {
-                        if(map_ab[localization[0]][up] == 0)
-                            options2.push(localization[0] + up);
+                        if(map_ab[column][up] == 0)
+                            options2.push(column + up);
                     }
                     else
                     {
-                        if(map_aw[localization[0]][up] == 0)
-                            options2.push(localization[0] + up);
+                        if(map_aw[column][up] == 0)
+                            options2.push(column + up);
                     } 
-                if(localization[0] != 8)  
-                    if(map[parseInt(localization[0]) + 1][up].toString()[0] != pawn[0] || Wreturn)
-                        if(pawn[0] == "1")
-                        {
-                            if(map_ab[parseInt(localization[0]) + 1][up] == 0)
-                                options2.push(parseInt(localization[0]) + 1 + up);
-                        }
-                        else
-                        {
-                            if(map_aw[parseInt(localization[0]) + 1][up] == 0)
-                                options2.push(parseInt(localization[0]) + 1 + up);
-                        } 
-                if(localization[0] != 1)
-                    if(map[localization[0] - 1][up].toString()[0] != pawn[0] || Wreturn) 
-                        if(pawn[0] == "1")
-                        {
-                            if(map_ab[localization[0] - 1][up] == 0)
-                                options2.push(localization[0] - 1 + up);
-                        }
-                        else
-                        {
-                            if(map_aw[localization[0] - 1][up] == 0)
-                                options2.push(localization[0] - 1 + up);
-                        } 
+                if(column != 8)
+                    {
+                        const local_column = parseInt(column) + 1;
+                        if(map[local_column][up].toString()[0] != pawn[0] || Wreturn)
+                            if(pawn[0] == "1")
+                            {
+                                if(map_ab[local_column][up] == 0)
+                                    options2.push(local_column + up);
+                            }
+                            else
+                            {
+                                if(map_aw[local_column][up] == 0)
+                                    options2.push(local_column + up);
+                            } 
+                    }
+                if(column != 1)
+                    {
+                        const local_column = column - 1;
+                        if(map[local_column][up].toString()[0] != pawn[0] || Wreturn) 
+                            if(pawn[0] == "1")
+                            {
+                                if(map_ab[local_column][up] == 0)
+                                    options2.push(local_column + up);
+                            }
+                            else
+                            {
+                                if(map_aw[local_column][up] == 0)
+                                    options2.push(local_column + up);
+                            } 
+                    }
             }
             if(!Wreturn && !return_move && !is_check)
             {
@@ -740,7 +755,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                     const poz = map[value[0]][value[1]].toString()
                     if((poz[1] == 5 || poz[1] == 2 || poz[1] == 4) && poz[0] == 2)
                     {   
-                        const positions_delete = move_option(poz, value, true)
+                        const positions_delete = move_option(poz, value, true) // this function is evli, fix it!
                         tocheck = options2.filter(value => (!positions_delete.includes(value) && !is_close(value, b_king_position)));
                         found = false;
                     }
@@ -778,26 +793,26 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             }
             break;
         case 4:
+            const column = localization[0];
             for (let i = index-1; i >= 0; i--) {
-                if(map[localization[0]][i] != 0)
+                if(map[column][i] != 0)
                 {
-                    // console.log(Math.floor(map[localization[0]][i]/10))
-                    if(map[localization[0]][i].toString()[0] != pawn[0] || Wreturn)
-                        tocheck.push(localization[0] + i);
+                    if(map[column][i].toString()[0] != pawn[0] || Wreturn)
+                        tocheck.push(column + i);
                     break;
                 }
-                tocheck.push(localization[0] + i);
+                tocheck.push(column + i);
             }
             for (let i = index + 1; i < 8; i++) {
-                if(map[localization[0]][i] != 0)
+                if(map[column][i] != 0)
                 {
-                    if(map[localization[0]][i].toString()[0] != pawn[0] || Wreturn)
-                        tocheck.push(localization[0] + i);
+                    if(map[column][i].toString()[0] != pawn[0] || Wreturn)
+                        tocheck.push(column + i);
                     break;
                 }
-                tocheck.push(localization[0] + i);
+                tocheck.push(column + i);
             }
-            for (let i = parseInt(localization[0]) - 1; i > 0; i--) {
+            for (let i = parseInt(column) - 1; i > 0; i--) {
                 if(map[i][index] != 0)
                 {
                     if(map[i][index].toString()[0] != pawn[0] || Wreturn)
@@ -806,7 +821,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 }
                 tocheck.push(i + index.toString());
             }
-            for (let i = parseInt(localization[0]) + 1; i <= 8; i++) {
+            for (let i = parseInt(column) + 1; i <= 8; i++) {
                 if(map[i][index] != 0)
                 {
                     if(map[i][index].toString()[0] != pawn[0] || Wreturn)
@@ -817,17 +832,22 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             }
             break;
         case 3:
-            let options = []
-            options.push(parseInt(localization[0]) + 1 + (index - 2).toString());
-            options.push(parseInt(localization[0]) + 1 + (index + 2).toString());
-            options.push(localization[0] - 1 + (index - 2).toString());
-            options.push(localization[0] - 1 + (index + 2).toString());
-            if(parseInt(localization[0]) + 2 <= 8) {
-                options.push(parseInt(localization[0]) + 2 + (index - 1).toString());
-                options.push(parseInt(localization[0]) + 2 + (index + 1).toString());
+            const column_3 = parseInt(localization[0]);
+            let options = [
+            column_3 + 1 + (index - 2).toString(),
+            column_3 + 1 + (index + 2).toString(),
+            column_3 - 1 + (index - 2).toString(),
+            column_3 - 1 + (index + 2).toString(),
+            column_3 - 2 + (index - 1).toString(),
+            column_3 - 2 + (index + 1).toString(),
+            ];
+            if(column_3 + 2 <= 8) {
+                options = [
+                    ...options, 
+                    column_3 + 2 + (index - 1).toString(), 
+                    column_3 + 2 + (index + 1).toString(),
+                ];
             }
-            options.push(localization[0] - 2 + (index - 1).toString());
-            options.push(localization[0] - 2 + (index + 1).toString());
             options.forEach(element => {
                 if(element[1] != "-")
                     if($("#"+element[0]+String.fromCharCode(parseInt(element[1]) + 65)).length)
@@ -836,25 +856,28 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             });
             break;
         case 5:
+            const column_5 = localization[0];
             for (let i = index-1; i >= 0; i--) {
-                if(map[localization[0]][i] != 0)
+                if(map[column_5][i] != 0)
                 {
-                    if(map[localization[0]][i].toString()[0] != pawn[0] || Wreturn)
-                        tocheck.push(localization[0] + i);
+                    if(map[column_5][i].toString()[0] != pawn[0] || Wreturn)
+                        tocheck.push(column_5 + i);
                     break;
                 }
-                tocheck.push(localization[0] + i);
+                tocheck.push(column_5 + i);
             }
             for (let i = index + 1; i < 8; i++) {
-                if(map[localization[0]][i] != 0)
+                if(map[column_5][i] != 0)
                 {
-                    if(map[localization[0]][i].toString()[0] != pawn[0] || Wreturn)
-                        tocheck.push(localization[0] + i);
+                    if(map[column_5][i].toString()[0] != pawn[0] || Wreturn)
+                        tocheck.push(column_5 + i);
                     break;
                 }
-                tocheck.push(localization[0] + i);
+                tocheck.push(column_5 + i);
             }
-            for (let i = parseInt(localization[0]) - 1; i > 0; i--) {
+
+            const column_int5 =  parseInt(localization[0]);
+            for (let i = column_int5 - 1; i > 0; i--) {
                 if(map[i][index] != 0)
                 {
                     if(map[i][index].toString()[0] != pawn[0] || Wreturn)
@@ -863,7 +886,7 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 }
                 tocheck.push(i + index.toString());
             }
-            for (let i = parseInt(localization[0]) + 1; i <= 8; i++) {
+            for (let i = column_int5 + 1; i <= 8; i++) {
                 if(map[i][index] != 0)
                 {
                     if(map[i][index].toString()[0] != pawn[0] || Wreturn)
@@ -873,16 +896,17 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 tocheck.push(i + index.toString());
             }
         case 2:
+            const column_2 = localization[0];
             for (let i = 1; i < 8; i++) {
-                if(localization[0] - i > 0 && index - i >= 0)
+                if(column_2 - i > 0 && index - i >= 0)
                 {
-                    if(map[localization[0] - i][index - i] != 0) 
+                    if(map[column_2 - i][index - i] != 0) 
                     {
-                        if(map[localization[0] - i][index - i].toString()[0] != pawn[0] || Wreturn)
-                            tocheck.push(localization[0] - i + (index - i).toString());
+                        if(map[column_2 - i][index - i].toString()[0] != pawn[0] || Wreturn)
+                            tocheck.push(column_2 - i + (index - i).toString());
                         break
                     }
-                    tocheck.push(localization[0] - i + (index - i).toString());
+                    tocheck.push(column_2 - i + (index - i).toString());
                 } 
                 else 
                 { 
@@ -891,15 +915,33 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 
             }
             for (let i = 1; i < 8; i++) {
-                if(localization[0] - i > 0 && index + i < 8)
+                if(column_2 - i > 0 && index + i < 8)
                 {
-                    if(map[localization[0] - i][index + i] != 0) 
+                    if(map[column_2 - i][index + i] != 0) 
                     {
-                        if(map[localization[0] - i][index + i].toString()[0] != pawn[0] || Wreturn)
-                            tocheck.push(localization[0] - i + (index + i).toString());
+                        if(map[column_2 - i][index + i].toString()[0] != pawn[0] || Wreturn)
+                            tocheck.push(column_2 - i + (index + i).toString());
                         break
                     }
-                    tocheck.push(localization[0] - i + (index + i).toString());
+                    tocheck.push(column_2 - i + (index + i).toString());
+                }
+                else 
+                { 
+                    break 
+                }
+            }
+
+            const column_int2 = parseInt(localization[0]);
+            for (let i = 1; i < 8; i++) {
+                if(column_int2 + i <= 8 && index + i < 8)
+                {
+                    if(map[column_int2 + i][index + i] != 0) 
+                    {
+                        if(map[column_int2 + i][index + i].toString()[0] != pawn[0] || Wreturn)
+                        tocheck.push(column_int2 + i + (index + i).toString());
+                        break
+                    }
+                    tocheck.push(column_int2 + i + (index + i).toString());
                 }
                 else 
                 { 
@@ -907,31 +949,15 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 }
             }
             for (let i = 1; i < 8; i++) {
-                if(parseInt(localization[0]) + i <= 8 && index + i < 8)
+                if(column_int2 + i <= 8 && index - i >= 0)
                 {
-                    if(map[parseInt(localization[0]) + i][index + i] != 0) 
+                    if(map[column_int2 + i][index - i] != 0) 
                     {
-                        if(map[parseInt(localization[0]) + i][index + i].toString()[0] != pawn[0] || Wreturn)
-                        tocheck.push(parseInt(localization[0]) + i + (index + i).toString());
+                        if(map[column_int2 + i][index - i].toString()[0] != pawn[0] || Wreturn)
+                        tocheck.push(column_int2 + i + (index - i).toString());
                         break
                     }
-                    tocheck.push(parseInt(localization[0]) + i + (index + i).toString());
-                }
-                else 
-                { 
-                    break 
-                }
-            }
-            for (let i = 1; i < 8; i++) {
-                if(parseInt(localization[0]) + i <= 8 && index - i >= 0)
-                {
-                    if(map[parseInt(localization[0]) + i][index - i] != 0) 
-                    {
-                        if(map[parseInt(localization[0]) + i][index - i].toString()[0] != pawn[0] || Wreturn)
-                        tocheck.push(parseInt(localization[0]) + i + (index - i).toString());
-                        break
-                    }
-                    tocheck.push(parseInt(localization[0]) + i + (index - i).toString());
+                    tocheck.push(column_int2 + i + (index - i).toString());
                 }
                 else 
                 { 
@@ -940,27 +966,33 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             }
             break;
         case 1:
+            const column_1 = parseInt(localization[0]);
+            const column_str1 = localization[0];
             if(pawn[0] == "1")
             {
-                if(localization[0] == 2 && map[parseInt(localization[0]) + 2][index] == 0 && map[parseInt(localization[0]) + 1][index] == 0) tocheck.push(parseInt(localization[0]) + 2 + index.toString());
-                if(map[parseInt(localization[0]) + 1][index] == 0) tocheck.push(parseInt(localization[0]) + 1 + index.toString());
+                if(column_str1 == 2 && map[column_1 + 2][index] == 0 && map[column_1 + 1][index] == 0) 
+                    tocheck.push(column_1 + 2 + index.toString());
+                if(map[column_1 + 1][index] == 0) 
+                    tocheck.push(column_1 + 1 + index.toString());
                 if(index != 0)
-                    if(map[parseInt(localization[0]) + 1][index - 1].toString()[0] == "2") 
-                        tocheck.push(parseInt(localization[0]) + 1 + (index - 1).toString());
+                    if(map[column_1 + 1][index - 1].toString()[0] == "2") 
+                        tocheck.push(column_1 + 1 + (index - 1).toString());
                 if(index != 7)
-                    if(map[parseInt(localization[0]) + 1][index + 1].toString()[0] == "2") 
-                        tocheck.push(parseInt(localization[0]) + 1 + (index + 1).toString());
+                    if(map[column_1 + 1][index + 1].toString()[0] == "2") 
+                        tocheck.push(column_1 + 1 + (index + 1).toString());
             } 
             else
             {
-                if(localization[0] == 7 && map[parseInt(localization[0]) - 2][index] == 0 && map[parseInt(localization[0]) - 1][index] == 0) tocheck.push(localization[0] - 2 + index.toString());
-                if(map[parseInt(localization[0]) - 1][index] == 0) tocheck.push(localization[0] - 1 + index.toString());
+                if(column_str1 == 7 && map[column_1 - 2][index] == 0 && map[column_1 - 1][index] == 0) 
+                    tocheck.push(column_str1 - 2 + index.toString());
+                if(map[column_1 - 1][index] == 0) 
+                    tocheck.push(column_str1 - 1 + index.toString());
                 if(index != 0)
-                    if(map[parseInt(localization[0]) - 1][index - 1].toString()[0] == "1") 
-                        tocheck.push(localization[0] - 1 + (index - 1).toString());
+                    if(map[column_1 - 1][index - 1].toString()[0] == "1") 
+                        tocheck.push(column_str1 - 1 + (index - 1).toString());
                 if(index != 7)
-                    if(map[parseInt(localization[0]) - 1][index + 1].toString()[0] == "1") 
-                        tocheck.push(localization[0] - 1 + (index + 1).toString());
+                    if(map[column_1 - 1][index + 1].toString()[0] == "1") 
+                        tocheck.push(column_str1 - 1 + (index + 1).toString());
             }
             break;
     }
