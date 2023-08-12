@@ -357,32 +357,32 @@ function move_pawn(position, ignore = true)
         if(pawn.toString()[0] == "1")
             w_king_position = position;
         else
-            b_king_position = position
+            b_king_position = position;
     }
 
     if(pawn != 16) {
-        change_position("16", w_king_position)
+        change_position("16", w_king_position);
         if(pawn == 14 && w_castling)
         {
             if(clicked_position[1] == 0)
-                w_castling[0] = 0
+                w_castling[0] = 0;
             else if(clicked_position[1] == 7)
-                w_castling[1] = 0
+                w_castling[1] = 0;
         }
     }
     else if(w_castling) 
     {
         if(position == 12 && w_castling[0] == 1)
         {
-            clicked_position = "10"
-            move_pawn("13", false)
+            clicked_position = "10";
+            move_pawn("13", false);
         }
         else if(position == 16 && w_castling[1] == 1)
         {
-            clicked_position = "17"
-            move_pawn("15", false)
+            clicked_position = "17";
+            move_pawn("15", false);
         }
-        w_castling = false 
+        w_castling = false;
     }
 
     if(pawn != 26) {
@@ -1006,14 +1006,20 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             }
             break;
     }
-    if(Wreturn || return_move)
-        return tocheck 
 
-    clicked_position = parseInt(localization[0]) + index.toString();
+    if(Wreturn)
+        return tocheck;
 
     if(is_check && pawn[1] != 6)
     {
-        show_options(tocheck.filter(value => check_moves.includes(value)));
+        if(return_move)
+            return tocheck;
+        else 
+        {
+            clicked_position = parseInt(localization[0]) + index.toString();
+            show_options(tocheck.filter(value => check_moves.includes(value)));
+            return;
+        }
     }
     else
     {
@@ -1041,7 +1047,6 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 else 
                     options = move_option("15", b_king_position, true); 
         
-                //console.log(options)
                 let diff = 0
                 for (let i = options.length - 1; i >= 0; i--) 
                 {
@@ -1067,21 +1072,29 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
 
                 result = jQuery.grep(result, function(value) 
                 {
-                    return value != localization[0]+index;
+                    return value != localization[0] + index;
                 });
 
                 map[localization[0]][index] = pawn;
-                console.log(result);
+
                 if(result.length > 0)
-                    show_options(tocheck.filter(value => result.includes(value)));
-                else
-                    show_options(tocheck);
+                    if(return_move)
+                        return tocheck.filter(value => result.includes(value));
+                    else
+                    {
+                        clicked_position = parseInt(localization[0]) + index.toString();
+                        show_options(tocheck.filter(value => result.includes(value)));
+                        return;
+                    }
             }
-            else 
-                show_options(tocheck);
         }
-        else 
-            show_options(tocheck);
+    }
+    if(return_move)
+        return tocheck;
+    else 
+    {
+        clicked_position = parseInt(localization[0]) + index.toString();
+        show_options(tocheck);
     }
 }
 
