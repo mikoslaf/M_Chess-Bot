@@ -18,7 +18,7 @@ let map = {
     4: [0,0,0,0,0,0,0,0],
     3: [0,0,0,0,0,0,0,0],
     2: [11,11,11,11,11,11,11,11],
-    1: [14,13,12,15,16,12,13,14]
+    1: [14,13,12,15,16,12,13,14],
 };
 
 let map_aw = { //attack white
@@ -29,7 +29,7 @@ let map_aw = { //attack white
     4: [0,0,0,0,0,0,0,0],
     3: [2,2,3,2,2,3,2,2],
     2: [1,1,1,4,4,1,1,1],
-    1: [0,1,1,1,1,1,1,0]
+    1: [0,1,1,1,1,1,1,0],
 };
 
 let map_ab = { // attack black
@@ -40,7 +40,7 @@ let map_ab = { // attack black
     4: [0,0,0,0,0,0,0,0],
     3: [0,0,0,0,0,0,0,0],
     2: [0,0,0,0,0,0,0,0],
-    1: [0,0,0,0,0,0,0,0]
+    1: [0,0,0,0,0,0,0,0],
 }; 
 
 let AI_on = false // false
@@ -52,7 +52,7 @@ let players = false;
 let is_check = false;
 let game_start = false;
 let check_moves = []
-let w_king_position = "14";
+let w_king_position = "46";
 let b_king_position = "84";
 let w_castling = [1,1] 
 let b_castling = [1,1] 
@@ -144,7 +144,7 @@ $(function() {
             4: [0,0,0,0,0,0,0,0],
             3: [0,0,0,0,0,0,0,0],
             2: [11,11,11,11,11,11,11,11],
-            1: [14,13,12,15,16,12,13,14]
+            1: [14,13,12,15,16,12,13,14],
         };
 
         map_aw = { //attack white
@@ -155,7 +155,7 @@ $(function() {
             4: [0,0,0,0,0,0,0,0],
             3: [2,2,3,2,2,3,2,2],
             2: [1,1,1,4,4,1,1,1],
-            1: [0,1,1,1,1,1,1,0]
+            1: [0,1,1,1,1,1,1,0],
         };
         
         map_ab = { // attack black
@@ -166,7 +166,7 @@ $(function() {
             4: [0,0,0,0,0,0,0,0],
             3: [0,0,0,0,0,0,0,0],
             2: [0,0,0,0,0,0,0,0],
-            1: [0,0,0,0,0,0,0,0]
+            1: [0,0,0,0,0,0,0,0],
         }; 
 
         AI_on = false;
@@ -321,10 +321,10 @@ function move_pawn(position, ignore = true)
 
     let pawn = map[clicked_position[0]][clicked_position[1]]
 
-    if(pawn != 16) change_position("16", w_king_position, -1)
-    if(pawn != 26) change_position("26", b_king_position, -1)
+    if(pawn != 16) change_position("16", w_king_position, -1);
+    if(pawn != 26) change_position("26", b_king_position, -1);
 
-    change_position(pawn.toString(), clicked_position, -1) // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
+    change_position(pawn.toString(), clicked_position, -1); // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
     $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
 
     let delete_pawn = []
@@ -347,8 +347,8 @@ function move_pawn(position, ignore = true)
 
     map[position[0]][position[1]] = pawn;
 
-    change_position(pawn.toString(), position);
     change_position_add(changed.concat(changed2));
+    change_position(pawn.toString(), position);
 
     $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).addClass("a"+pawn);
 
@@ -420,7 +420,7 @@ function move_pawn(position, ignore = true)
     {
         is_check = true;
         $(".contener").css("border-color", "red");
-        check_options(pawn.toString(), position);
+        check_options(pawn.toString(), position, true);
     }
     else if(is_check)
     {
@@ -468,19 +468,19 @@ function move_pawn(position, ignore = true)
   
     }
 
-    // for(let i=8;i>0;i--)
-    // {
-    //     $.each(map_aw[i],(j, val) => {
-    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-    //     });
-    // }
+    for(let i=8;i>0;i--)
+    {
+        $.each(map_aw[i],(j, val) => {
+                $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
+        });
+    }
     show_options()
 }
 
-function check_options(pawn, position)
+function check_options(pawn, position, white)
 {
     check_moves = []
-    if(pawn[0] == 2)
+    if(white)
     {
         if(pawn[1] == 1 || pawn[1] == 3 || is_close(w_king_position, position))
         {
@@ -488,23 +488,28 @@ function check_options(pawn, position)
         }
         else
         {
-            const options = move_option(pawn, position, false, true);
+            const options = move_option("15", w_king_position, false, true);
             let diff = 0
-            for (let i = options.length; i > 0; i--) 
+            for (let i = options.length - 1; i >= 0; i--) 
             {
                 if(diff > 0)
                 {
                     check_moves.push(options[i])
                     if(diff != Math.abs(options[i] - options[i-1]))
-                        break
+                        break;
                 }
                 else 
                 {
-                    if(options[i] == w_king_position)
-                        diff = Math.abs(options[i] - options[i-1])
+                    const column = options[i].toString()[0];
+                    const index = options[i].toString()[1];
+                    const space = map[column][index].toString();
+                    if(space[0] == 2 && (space[1] == 2 || space[1] == 4 || space[1] == 5))
+                    {
+                        diff = Math.abs(options[i] - options[i-1]);
+                        check_moves.push(options[i]);
+                    }
                 }
             }
-            check_moves.push(position);
         }
         if(is_end(w_king_position, 1))
         {
@@ -520,23 +525,28 @@ function check_options(pawn, position)
         }
         else
         {
-            const options = move_option(pawn, position, false, true);
+            const options = move_option("25", b_king_position, false, true);
             let diff = 0
-            for (let i = options.length; i > 0; i--) 
+            for (let i = options.length - 1; i >= 0; i--) 
             {
                 if(diff > 0)
                 {
                     check_moves.push(options[i])
                     if(diff != Math.abs(options[i] - options[i-1]))
-                        break
+                        break;
                 }
                 else 
                 {
-                    if(options[i] == b_king_position)
-                        diff = Math.abs(options[i] - options[i-1])
+                    const column = options[i].toString()[0];
+                    const index = options[i].toString()[1];
+                    const space = map[column][index].toString();
+                    if(space[0] == 1 && (space[1] == 2 || space[1] == 4 || space[1] == 5))
+                    {
+                        diff = Math.abs(options[i] - options[i-1]);
+                        check_moves.push(options[i]);
+                    }
                 }
             }
-            check_moves.push(position);
         }
 
         if(is_end(b_king_position, 2))
@@ -550,7 +560,7 @@ function check_options(pawn, position)
 
 function is_end(position, site)
 {
-    console.log(check_moves)
+    //console.log(check_moves)
     const king_moves = move_option(site + "6", position, false, true);
     let found = true;
     if(king_moves.length == 0)
@@ -762,12 +772,12 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 });
                 if(found)
                     tocheck = options2.filter(value => !is_close(value, b_king_position));
-                console.log(options2);
+                //console.log(options2);
                 map[localization[0]][index] = 16
             }
             else if(pawn[0] == "2" && map_aw[localization[0]][index] != 0)
             {
-                if(is_check && pawn == 26) console.log(map[localization[0]][index])
+                //if(is_check && pawn == 26) console.log(map[localization[0]][index])
                 map[localization[0]][index] = 0
                 const positions_check = move_option("25", localization, true)
                 let found = true
