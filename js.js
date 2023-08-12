@@ -468,12 +468,12 @@ function move_pawn(position, ignore = true)
   
     }
 
-    for(let i=8;i>0;i--)
-    {
-        $.each(map_aw[i],(j, val) => {
-                $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
-        });
-    }
+    // for(let i=8;i>0;i--)
+    // {
+    //     $.each(map_aw[i],(j, val) => {
+    //             $(".contener").children(".field").eq(8 * (8 - i) + j).html(val);
+    //     });
+    // }
     show_options()
 }
 
@@ -1145,50 +1145,62 @@ function find_move()
         let positions = move_option(map[val[0]][val[1]].toString(), val, false, true);
         if(is_check && map[val[0]][val[1]].toString()[1] != 6)
             positions = positions.filter(value => check_moves.includes(value));
+
+        const pawn = map[val[0]][val[1]].toString();
+        let mod = 0;
+        if(pawn[1] == 5 && map_aw[val[0]][val[1]] > 0)
+            mod += 2;
+        if(map_aw[val[0]][val[1]] > map_ab[val[0]][val[1]])
+            mod += 1; 
         $.each(positions,(_, value) => {
-            const pawn = map[val[0]][val[1]].toString()
-            const target = map[value[0]][value[1]].toString()
-            global_options.push([val, value])
+            const target = map[value[0]][value[1]].toString();
+            global_options.push([val, value]);
             if(target[0] == 1)
             {
                 if(map_aw[value[0]][value[1]] == 0)
                 {
                     if(target[1] == 5)
-                        options.push([9, val, value])
+                        options.push([9 + mod, val, value]);
                     else 
-                        options.push([8, val, value])
+                        options.push([8 + mod, val, value]);
                 }
                 else if(pawn_value[target[1]] > pawn_value[pawn[1]])
                     {
                         if(target[1] == 5 && pawn[1] != 5)
-                            options.push([9, val, value])
+                            options.push([9 + mod, val, value]);
                         else 
-                            options.push([7, val, value])
+                            options.push([4, val, value]);
                     }
-            }
+                else if(pawn_value[target[1]] == pawn_value[pawn[1]])
+                    {
+                        if(pawn[1] != 5)
+                            if(map_ab[value[0]][value[1]] > map_aw[value[0]][value[1]])
+                                options.push([6 + mod, val, value]); 
+                    }
+                }
             else if(map_aw[value[0]][value[1]] == 0)
             {
-                options.push([5, val, value]);
+                options.push([5 + mod, val, value]);
             }
             else if(map_aw[value[0]][value[1]] > 0)
             {
                 if(map_ab[value[0]][value[1]] == map_aw[value[0]][value[1]])
                     if(pawn[1] == 1)
-                        options.push([5, val, value]); 
+                        options.push([5 + mod, val, value]); 
                     else 
-                        options.push([4, val, value]); 
+                        options.push([4 + mod, val, value]); 
                 else if(map_ab[value[0]][value[1]] > map_aw[value[0]][value[1]])
                     if(pawn[1] == 5)
-                        options.push([1, val, value]); 
+                        options.push([1 + mod, val, value]); 
                     else 
-                        options.push([5, val, value]); 
+                        options.push([5 + mod, val, value]); 
                 else 
-                    options.push([1, val, value]); 
+                    options.push([1 + mod, val, value]); 
             }
         });
     });
 
-    // console.log(options);
+    //console.log(options);
     // console.log(global_options);
     if(options.length > 0 )
         {
