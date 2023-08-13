@@ -944,13 +944,13 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                     {
                         if(map[column_2 - i][index - i].toString()[0] != pawn[0] || Wreturn)
                             tocheck.push(column_2 - i + (index - i).toString());
-                        break
+                        break;
                     }
                     tocheck.push(column_2 - i + (index - i).toString());
                 } 
                 else 
                 { 
-                    break 
+                    break; 
                 }
                 
             }
@@ -1064,7 +1064,21 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                     if(poz[0] == pawn[0])
                         found[0] = 1;
                     else
-                        found[1] = 1;
+                    {
+                        const position = ((pawn[0] == 1) ? w_king_position : b_king_position).toString();
+                        if(poz[1] == 4)
+                        {
+                            if(position[0] == value[0] || position[1] == value[1])
+                                found[1] = 1;
+                        }
+                        else if(poz[1] == 2)
+                        {
+                            if(position[0] != value[0] && position[1] != value[1])
+                                found[1] = 1;
+                        }
+                        else if(poz[1] == 5)
+                            found[1] = 1;
+                    }
                 }
             });
             if(found[0] == 1 && found[1] == 1)
@@ -1096,7 +1110,10 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                     {
                         const field = map[options[i][0]][options[i][1]].toString();
                         if(field[0] != pawn[0] && (field[1] == 5 || field[1] == 4 || field[1] == 2))
-                            diff = Math.abs(options[i] - options[i-1])
+                            {
+                                diff = Math.abs(options[i] - options[i-1]);
+                                result.push(options[i]);
+                            }
                     }
                 }
 
@@ -1184,10 +1201,13 @@ function find_move()
             mod += 1; 
         $.each(positions,(_, value) => {
             const target = map[value[0]][value[1]].toString();
+            const attack_white_to = map_aw[value[0]][value[1]];
+            const attack_black_to = map_ab[value[0]][value[1]];
+
             global_options.push([val, value]);
             if(target[0] == 1)
             {
-                if(map_aw[value[0]][value[1]] == 0)
+                if(attack_white_to == 0)
                 {
                     if(target[1] == 5)
                         options.push([9 + mod, val, value]);
@@ -1204,22 +1224,25 @@ function find_move()
                 else if(pawn_value[target[1]] == pawn_value[pawn[1]])
                     {
                         if(pawn[1] != 5)
-                            if(map_ab[value[0]][value[1]] > map_aw[value[0]][value[1]])
+                            if(attack_black_to > attack_white_to)
                                 options.push([6 + mod, val, value]); 
                     }
                 }
-            else if(map_aw[value[0]][value[1]] == 0)
+            else if(attack_white_to == 0)
             {
-                options.push([5 + mod, val, value]);
+                if(is_close(value, w_king_position) && attack_white_to == 0)
+                    options.push([1 + mod, val, value]);
+                else 
+                    options.push([5 + mod, val, value]);
             }
-            else if(map_aw[value[0]][value[1]] > 0)
+            else if(attack_white_to > 0)
             {
-                if(map_ab[value[0]][value[1]] == map_aw[value[0]][value[1]])
+                if(attack_black_to == attack_white_to)
                     if(pawn[1] == 1)
                         options.push([5 + mod, val, value]); 
                     else 
                         options.push([4 + mod, val, value]); 
-                else if(map_ab[value[0]][value[1]] > map_aw[value[0]][value[1]])
+                else if(attack_black_to > attack_white_to)
                     if(pawn[1] == 5)
                         options.push([1 + mod, val, value]); 
                     else 
