@@ -52,7 +52,7 @@ let players = false;
 let is_check = false;
 let game_start = false;
 let check_moves = []
-let w_king_position = "46";
+let w_king_position = "14";
 let b_king_position = "84";
 let w_castling = [1,1] 
 let b_castling = [1,1] 
@@ -426,6 +426,10 @@ function move_pawn(position, ignore = true)
     {
         is_check = false;
         $(".contener").css("border-color", "black");
+    } else if(is_draw(pawn.toString()[0]))
+    {
+        alert("Remis")
+        move = 3
     }
 
     if(AI_on && ignore)
@@ -475,6 +479,32 @@ function move_pawn(position, ignore = true)
     //     });
     // }
     show_options()
+}
+
+function is_draw(site)
+{
+    site = (site == 1) ? 2 : 1;
+    const position = (site == 1) ? w_king_position : b_king_position;
+    const king_options = move_option(site + "6", position, false, true);
+    if (king_options.length == 0)
+    {
+
+        for (let column = 1; column <= 8; column++) {
+          for (let index = 0; index <= 7; index++) {
+            const pawn = map[column][index];
+            if (pawn != 0 && pawn.toString()[0] == site)
+            {
+                const pawn_position = column + index.toString();
+                const options = move_option(pawn.toString(), pawn_position, false, true);
+                if(options.length > 0)
+                    return false;
+            }
+          }
+        }
+        
+        return true;
+    }
+    return false;
 }
 
 function check_options(pawn, position, white)
