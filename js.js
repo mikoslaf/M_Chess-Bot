@@ -327,7 +327,7 @@ function move_pawn(position, ignore = true)
     change_position(pawn.toString(), clicked_position, -1); // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
     $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
 
-    let delete_pawn = []
+    const delete_pawn = []
     if(map[position[0]][position[1]] != 0)
     {
         change_position(map[position[0]][position[1]].toString(), position, -1)
@@ -432,6 +432,12 @@ function move_pawn(position, ignore = true)
         move = 3
     }
 
+    if(delete_pawn.length > 0 && is_draw_kings())
+    {
+        alert("Remis")
+        move = 3
+    }
+
     if(AI_on && ignore)
     {
         if(pawn.toString()[0] == "2")
@@ -446,6 +452,7 @@ function move_pawn(position, ignore = true)
             bot_pawns = jQuery.grep(bot_pawns, function(value) {
                 return value != delete_pawn[0];
             });
+            
             find_move()
         } 
         else 
@@ -479,6 +486,22 @@ function move_pawn(position, ignore = true)
     //     });
     // }
     show_options()
+}
+
+function is_draw_kings()
+{
+    for (let column = 1; column <= 8; column++) 
+    {
+        for (let index = 0; index <= 7; index++) 
+        {
+          const pawn = map[column][index];
+          if (pawn != 0 && pawn.toString()[1] != 6)
+          {
+            return false;
+          }
+        }
+    }
+    return true;
 }
 
 function is_draw(site)
@@ -763,24 +786,24 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
             {
                 if(pawn[0] == "1")
                 {
-                    if(w_castling[0] == 1 && map[1][1] == 0 && map[1][2] == 0 && map[1][3] == 0)
+                    if(w_castling[0] == 1 && map[1][1] == 0 && map[1][2] == 0 && map[1][3] == 0 && map[1][0] == 14)
                     {
-                        options2.push("12")
+                        options2.push("12");
                     }
-                    if(w_castling[1] == 1 && map[1][5] == 0 && map[1][6] == 0)
+                    if(w_castling[1] == 1 && map[1][5] == 0 && map[1][6] == 0 && map[1][7] == 14)
                     {
-                        options2.push("16")
+                        options2.push("16");
                     }
                 }
                 else
                 {
-                    if(b_castling[0] == 1 && map[8][1] == 0 && map[8][2] == 0 && map[8][3] == 0)
+                    if(b_castling[0] == 1 && map[8][1] == 0 && map[8][2] == 0 && map[8][3] == 0 && map[8][0] == 24)
                     {
-                        options2.push("82")
+                        options2.push("82");
                     }
-                    if(b_castling[1] == 1 && map[8][5] == 0 && map[8][6] == 0)
+                    if(b_castling[1] == 1 && map[8][5] == 0 && map[8][6] == 0 && map[8][7] == 24)
                     {
-                        options2.push("86")
+                        options2.push("86");
                     }
                 }
             }
@@ -1233,7 +1256,10 @@ function find_move()
                 if(is_close(value, w_king_position) && attack_white_to == 0)
                     options.push([1 + mod, val, value]);
                 else 
-                    options.push([5 + mod, val, value]);
+                    if(pawn[1] == 6)
+                        options.push([5 + mod, val, value]);
+                    else 
+                        options.push([4 + mod, val, value]);
             }
             else if(attack_white_to > 0)
             {
