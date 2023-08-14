@@ -1250,36 +1250,43 @@ function find_move()
                             if(attack_black_to > attack_white_to)
                                 options.push([6 + mod, val, value]); 
                     }
-                }
+            }
             else if(attack_white_to == 0)
             {
-                if(is_close(value, w_king_position) && attack_white_to == 0)
+                if(is_close(value, w_king_position)) //  && attack_black_to < 1
                     options.push([1 + mod, val, value]);
                 else 
                     if(pawn[1] == 6)
-                        options.push([5 + mod, val, value]);
-                    else 
                         options.push([4 + mod, val, value]);
+                    else 
+                        options.push([5 + mod, val, value]);
             }
             else if(attack_white_to > 0)
             {
-                if(attack_black_to == attack_white_to)
-                    if(pawn[1] == 1)
-                        options.push([5 + mod, val, value]); 
-                    else 
-                        options.push([4 + mod, val, value]); 
-                else if(attack_black_to > attack_white_to)
-                    if(pawn[1] == 5)
-                        options.push([1 + mod, val, value]); 
-                    else 
-                        options.push([5 + mod, val, value]); 
+                if(is_close_pawn11(value) && pawn != 21)
+                {
+                    options.push([2 + mod, val, value]); 
+                }
                 else 
-                    options.push([1 + mod, val, value]); 
+                {
+                    if(attack_black_to == attack_white_to)
+                        if(pawn[1] == 1)
+                            options.push([5 + mod, val, value]); 
+                        else 
+                            options.push([4 + mod, val, value]); 
+                    else if(attack_black_to > attack_white_to)
+                        if(pawn[1] == 5)
+                            options.push([1 + mod, val, value]); 
+                        else 
+                            options.push([5 + mod, val, value]); 
+                    else 
+                        options.push([1 + mod, val, value]); 
+                }
             }
         });
     });
 
-    //console.log(options);
+    //console.table(options);
     // console.log(global_options);
     if(options.length > 0 )
         {
@@ -1302,4 +1309,21 @@ function find_move()
             }
         }
     //console.log(options)
+}
+
+function is_close_pawn11(position)
+{
+    const column = position[0] - 1;
+    const index = parseInt(position[1]);
+    if(column > 0)
+    {
+        if(index > 0)      
+            if(map[column][index - 1] == 11)
+                return true;
+        
+        if(index < 7)
+            if(map[column][index + 1] == 11)
+                return true;
+    }
+    return false; 
 }
