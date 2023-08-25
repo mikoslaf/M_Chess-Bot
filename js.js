@@ -132,6 +132,7 @@ $(function() {
 
     $(".Game").on("click", () => {
         AI_on = true;
+        end("You Won!");
     });
 
 
@@ -179,6 +180,7 @@ $(function() {
         move = 1;
 
         block_buttons();
+        $(".contener_end").removeClass("contener_end-in");
 
         check_moves = [];
         is_check = false;
@@ -428,14 +430,14 @@ function move_pawn(position, ignore = true)
         $(".contener").css("border-color", "black");
     } else if(is_draw(pawn.toString()[0]))
     {
-        alert("Remis")
-        move = 3
+        end("Draw");
+        move = 3;
     }
 
     if(delete_pawn.length > 0 && is_draw_kings())
     {
-        alert("Remis")
-        move = 3
+        end("Draw");
+        move = 3;
     }
 
     if(AI_on && ignore)
@@ -566,8 +568,8 @@ function check_options(pawn, position, white)
         }
         if(is_end(w_king_position, 1))
         {
-            alert("czarni wygrali")
-            move = 3
+            end("Blacks won");
+            move = 3;
         }
     }
     else 
@@ -604,8 +606,8 @@ function check_options(pawn, position, white)
 
         if(is_end(b_king_position, 2))
         {
-            alert("biali wygrali")
-            move = 3
+            end("White Won");
+            move = 3;
         }
     }
 
@@ -641,6 +643,12 @@ function is_end(position, site)
         return found;
     }
     return false;
+}
+
+function end(result)
+{
+    $(".contener_end h2").html(result);
+    $(".contener_end").addClass("contener_end-in");
 }
 
 function move_option(pawn, localization, Wreturn = false, return_move = false) 

@@ -1,92 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>M_Chess</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="contener">
-        <div class="field white" id="8A">8A</div>
-        <div class="field black" id="8B">8B</div>
-        <div class="field white" id="8C">8C</div>
-        <div class="field black" id="8D">8D</div>
-        <div class="field white" id="8E">8E</div>
-        <div class="field black" id="8F">8F</div>
-        <div class="field white" id="8G">8G</div>
-        <div class="field black" id="8H">8H</div>
+      <div class="contener_end">
+        <h2>You Win</h2>
+        <p>If the game should't end, report it!</p>
+        <button class="Reset">Reset</button>
+      </div>
+      <div class="field white" id="8A">8A</div>
+      <div class="field black" id="8B">8B</div>
+      <div class="field white" id="8C">8C</div>
+      <div class="field black" id="8D">8D</div>
+      <div class="field white" id="8E">8E</div>
+      <div class="field black" id="8F">8F</div>
+      <div class="field white" id="8G">8G</div>
+      <div class="field black" id="8H">8H</div>
 
-        <div class="field black" id="7A">7A</div>
-        <div class="field white" id="7B">7B</div>
-        <div class="field black" id="7C">7C</div>
-        <div class="field white" id="7D">7D</div>
-        <div class="field black" id="7E">7E</div>
-        <div class="field white" id="7F">7F</div>
-        <div class="field black" id="7G">7G</div>
-        <div class="field white" id="7H">7H</div>
+      <div class="field black" id="7A">7A</div>
+      <div class="field white" id="7B">7B</div>
+      <div class="field black" id="7C">7C</div>
+      <div class="field white" id="7D">7D</div>
+      <div class="field black" id="7E">7E</div>
+      <div class="field white" id="7F">7F</div>
+      <div class="field black" id="7G">7G</div>
+      <div class="field white" id="7H">7H</div>
 
-        <div class="field white" id="6A">6A</div>
-        <div class="field black" id="6B">6B</div>
-        <div class="field white" id="6C">6C</div>
-        <div class="field black" id="6D">6D</div>
-        <div class="field white" id="6E">6E</div>
-        <div class="field black" id="6F">6F</div>
-        <div class="field white" id="6G">6G</div>
-        <div class="field black" id="6H">6H</div>
+      <div class="field white" id="6A">6A</div>
+      <div class="field black" id="6B">6B</div>
+      <div class="field white" id="6C">6C</div>
+      <div class="field black" id="6D">6D</div>
+      <div class="field white" id="6E">6E</div>
+      <div class="field black" id="6F">6F</div>
+      <div class="field white" id="6G">6G</div>
+      <div class="field black" id="6H">6H</div>
 
-        <div class="field black" id="5A">5A</div>
-        <div class="field white" id="5B">5B</div>
-        <div class="field black" id="5C">5C</div>
-        <div class="field white" id="5D">5D</div>
-        <div class="field black" id="5E">5E</div>
-        <div class="field white" id="5F">5F</div>
-        <div class="field black" id="5G">5G</div>
-        <div class="field white" id="5H">5H</div>
+      <div class="field black" id="5A">5A</div>
+      <div class="field white" id="5B">5B</div>
+      <div class="field black" id="5C">5C</div>
+      <div class="field white" id="5D">5D</div>
+      <div class="field black" id="5E">5E</div>
+      <div class="field white" id="5F">5F</div>
+      <div class="field black" id="5G">5G</div>
+      <div class="field white" id="5H">5H</div>
 
-        <div class="field white" id="4A">4A</div>
-        <div class="field black" id="4B">4B</div>
-        <div class="field white" id="4C">4C</div>
-        <div class="field black" id="4D">4D</div>
-        <div class="field white" id="4E">4E</div>
-        <div class="field black" id="4F">4F</div>
-        <div class="field white" id="4G">4G</div>
-        <div class="field black" id="4H">4H</div>
+      <div class="field white" id="4A">4A</div>
+      <div class="field black" id="4B">4B</div>
+      <div class="field white" id="4C">4C</div>
+      <div class="field black" id="4D">4D</div>
+      <div class="field white" id="4E">4E</div>
+      <div class="field black" id="4F">4F</div>
+      <div class="field white" id="4G">4G</div>
+      <div class="field black" id="4H">4H</div>
 
-        <div class="field black" id="3A">3A</div>
-        <div class="field white" id="3B">3B</div>
-        <div class="field black" id="3C">3C</div>
-        <div class="field white" id="3D">3D</div>
-        <div class="field black" id="3E">3E</div>
-        <div class="field white" id="3F">3F</div>
-        <div class="field black" id="3G">3G</div>
-        <div class="field white" id="3H">3H</div>
+      <div class="field black" id="3A">3A</div>
+      <div class="field white" id="3B">3B</div>
+      <div class="field black" id="3C">3C</div>
+      <div class="field white" id="3D">3D</div>
+      <div class="field black" id="3E">3E</div>
+      <div class="field white" id="3F">3F</div>
+      <div class="field black" id="3G">3G</div>
+      <div class="field white" id="3H">3H</div>
 
-        <div class="field white" id="2A">2A</div>
-        <div class="field black" id="2B">2B</div>
-        <div class="field white" id="2C">2C</div>
-        <div class="field black" id="2D">2D</div>
-        <div class="field white" id="2E">2E</div>
-        <div class="field black" id="2F">2F</div>
-        <div class="field white" id="2G">2G</div>
-        <div class="field black" id="2H">2H</div>
+      <div class="field white" id="2A">2A</div>
+      <div class="field black" id="2B">2B</div>
+      <div class="field white" id="2C">2C</div>
+      <div class="field black" id="2D">2D</div>
+      <div class="field white" id="2E">2E</div>
+      <div class="field black" id="2F">2F</div>
+      <div class="field white" id="2G">2G</div>
+      <div class="field black" id="2H">2H</div>
 
-        <div class="field black" id="1A">1A</div>
-        <div class="field white" id="1B">1B</div>
-        <div class="field black" id="1C">1C</div>
-        <div class="field white" id="1D">1D</div>
-        <div class="field black" id="1E">1E</div>
-        <div class="field white" id="1F">1F</div>
-        <div class="field black" id="1G">1G</div>
-        <div class="field white" id="1H">1H</div>
+      <div class="field black" id="1A">1A</div>
+      <div class="field white" id="1B">1B</div>
+      <div class="field black" id="1C">1C</div>
+      <div class="field white" id="1D">1D</div>
+      <div class="field black" id="1E">1E</div>
+      <div class="field white" id="1F">1F</div>
+      <div class="field black" id="1G">1G</div>
+      <div class="field white" id="1H">1H</div>
 
-        <script src="code.jquery.com_jquery-3.7.0.min.js"></script>
-        <script src="js.js"></script>
+      <script src="code.jquery.com_jquery-3.7.0.min.js"></script>
+      <script src="js.js"></script>
     </div>
     <div class="menu">
-        <button class="2players">2 players (Mobile)</button>
-        <button class="Game">Game with AI</button>
-        <button class="Reset">Reset</button>
+      <button class="2players">2 players (Mobile)</button>
+      <button class="Game">Game with AI</button>
+      <button class="Reset">Reset</button>
     </div>
-</body>
+  </body>
 </html>
