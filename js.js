@@ -57,6 +57,7 @@ let b_king_position = "84";
 let w_castling = [1,1];
 let b_castling = [1,1]; 
 let flagged = [];
+let en_passant = 0;
 
 const pawn_value = {
     1:1,
@@ -328,13 +329,23 @@ function move_pawn(position, ignore = true)
     change_position(pawn.toString(), clicked_position, -1); // clicked_positio - tam, gdzie stał | postion - tam gdzi idzie
     $("#"+clicked_position[0]+String.fromCharCode(parseInt(clicked_position[1]) + 65)).removeClass("a"+pawn);
 
-    const delete_pawn = []
+    const delete_pawn = [];
     if(map[position[0]][position[1]] != 0)
     {
-        change_position(map[position[0]][position[1]].toString(), position, -1)
-        delete_pawn.push(position)
+        change_position(map[position[0]][position[1]].toString(), position, -1);
+        delete_pawn.push(position);
         $("#"+position[0]+String.fromCharCode(parseInt(position[1]) + 65)).removeClass("a"+map[position[0]][position[1]]);
+    }
 
+    let position_todelete = 0;
+    if(position == en_passant)
+    {
+        position_todelete = (en_passant[0] == 3) ?
+            parseInt(en_passant[0]) + 1 + en_passant[1].toString() :
+            parseInt(en_passant[0]) - 1 + en_passant[1].toString();
+        change_position(map[position_todelete[0]][position_todelete[1]].toString(), position_todelete, -1);
+        delete_pawn.push(position_todelete);
+        $("#"+position_todelete[0]+String.fromCharCode(parseInt(position_todelete[1]) + 65)).removeClass("a"+map[position_todelete[0]][position_todelete[1]]);
     }
 
     const changed = change_position_remove(clicked_position, delete_pawn);
@@ -347,6 +358,9 @@ function move_pawn(position, ignore = true)
     if(pawn == 21 && position[0] == 1) pawn = 25
 
     map[position[0]][position[1]] = pawn;
+
+    if(position_todelete != 0)
+        map[position_todelete[0]][position_todelete[1]] = 0;
 
     change_position_add(changed.concat(changed2));
     change_position(pawn.toString(), position);
@@ -437,6 +451,21 @@ function move_pawn(position, ignore = true)
     {
         end("Draw");
         move = 3;
+    }
+
+    if(en_passant != 0)
+        en_passant = 0;
+
+    if(pawn.toString()[1] == "1")
+    {
+        if(clicked_position[0] == 2 && position[0] == 4)
+        {
+            en_passant = "3" + clicked_position[1];
+        }
+        else if(clicked_position[0] == 7 && position[0] == 5)
+        {
+            en_passant = "6" + clicked_position[1];
+        }
     }
 
     if(AI_on && ignore)
@@ -1045,10 +1074,10 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 if(map[column_1 + 1][index] == 0) 
                     tocheck.push(column_1 + 1 + index.toString());
                 if(index != 0)
-                    if(map[column_1 + 1][index - 1].toString()[0] == "2") 
+                    if(map[column_1 + 1][index - 1].toString()[0] == "2" || column_1 + 1 + (index - 1).toString() == en_passant) 
                         tocheck.push(column_1 + 1 + (index - 1).toString());
                 if(index != 7)
-                    if(map[column_1 + 1][index + 1].toString()[0] == "2") 
+                    if(map[column_1 + 1][index + 1].toString()[0] == "2" || column_1 + 1 + (index + 1).toString() == en_passant) 
                         tocheck.push(column_1 + 1 + (index + 1).toString());
             } 
             else
@@ -1058,10 +1087,10 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 if(map[column_1 - 1][index] == 0) 
                     tocheck.push(column_str1 - 1 + index.toString());
                 if(index != 0)
-                    if(map[column_1 - 1][index - 1].toString()[0] == "1") 
+                    if(map[column_1 - 1][index - 1].toString()[0] == "1" || column_1 - 1 + (index - 1).toString() == en_passant) 
                         tocheck.push(column_str1 - 1 + (index - 1).toString());
                 if(index != 7)
-                    if(map[column_1 - 1][index + 1].toString()[0] == "1") 
+                    if(map[column_1 - 1][index + 1].toString()[0] == "1" || column_1 - 1 + (index + 1).toString() == en_passant) 
                         tocheck.push(column_str1 - 1 + (index + 1).toString());
             }
             break;
