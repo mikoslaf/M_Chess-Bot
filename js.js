@@ -51,12 +51,12 @@ let clicked_position = 0;
 let players = false;
 let is_check = false;
 let game_start = false;
-let check_moves = []
+let check_moves = [];
 let w_king_position = "14";
 let b_king_position = "84";
-let w_castling = [1,1] 
-let b_castling = [1,1] 
-let flagged = []
+let w_castling = [1,1];
+let b_castling = [1,1]; 
+let flagged = [];
 
 const pawn_value = {
     1:1,
@@ -132,7 +132,6 @@ $(function() {
 
     $(".Game").on("click", () => {
         AI_on = true;
-        end("You Won!");
     });
 
 
@@ -568,7 +567,7 @@ function check_options(pawn, position, white)
         }
         if(is_end(w_king_position, 1))
         {
-            end("Blacks won");
+            end("Blacks wins");
             move = 3;
         }
     }
@@ -606,7 +605,7 @@ function check_options(pawn, position, white)
 
         if(is_end(b_king_position, 2))
         {
-            end("White Won");
+            end("White wins");
             move = 3;
         }
     }
