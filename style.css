@@ -122,7 +122,7 @@ button:active {
   left: 33.33%;
   background-color: white;
   width: 33.33%;
-  height: 33.33%;
+  min-height: 33.33%;
   text-align: center;
   border: 3px solid #231d1f;
   visibility: hidden;
