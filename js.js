@@ -1074,10 +1074,14 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 if(map[column_1 + 1][index] == 0) 
                     tocheck.push(column_1 + 1 + index.toString());
                 if(index != 0)
-                    if(map[column_1 + 1][index - 1].toString()[0] == "2" || column_1 + 1 + (index - 1).toString() == en_passant) 
+                    if(map[column_1 + 1][index - 1].toString()[0] == "2" || 
+                    (column_1 + 1 + (index - 1).toString() == en_passant && column_1 != 2)
+                    ) 
                         tocheck.push(column_1 + 1 + (index - 1).toString());
                 if(index != 7)
-                    if(map[column_1 + 1][index + 1].toString()[0] == "2" || column_1 + 1 + (index + 1).toString() == en_passant) 
+                    if(map[column_1 + 1][index + 1].toString()[0] == "2" ||
+                    (column_1 + 1 + (index + 1).toString() == en_passant && column_1 != 2)
+                    ) 
                         tocheck.push(column_1 + 1 + (index + 1).toString());
             } 
             else
@@ -1087,10 +1091,12 @@ function move_option(pawn, localization, Wreturn = false, return_move = false)
                 if(map[column_1 - 1][index] == 0) 
                     tocheck.push(column_str1 - 1 + index.toString());
                 if(index != 0)
-                    if(map[column_1 - 1][index - 1].toString()[0] == "1" || column_1 - 1 + (index - 1).toString() == en_passant) 
+                    if(map[column_1 - 1][index - 1].toString()[0] == "1" ||
+                    (column_1 - 1 + (index - 1).toString() == en_passant && column_1 != 7)) 
                         tocheck.push(column_str1 - 1 + (index - 1).toString());
                 if(index != 7)
-                    if(map[column_1 - 1][index + 1].toString()[0] == "1" || column_1 - 1 + (index + 1).toString() == en_passant) 
+                    if(map[column_1 - 1][index + 1].toString()[0] == "1" || 
+                    (column_1 - 1 + (index + 1).toString() == en_passant && column_1 != 7)) 
                         tocheck.push(column_str1 - 1 + (index + 1).toString());
             }
             break;
