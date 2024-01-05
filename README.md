@@ -7,7 +7,7 @@ Do you think you are able to beat my bot?
 # How to play?
 <b>First step:</b> 
 <br>
-Just click the [link](https://mikoslaf.github.io/M_Chess-AI/) or download the project and open index.html.
+Just click the [link](https://mikoslaf.github.io/M_Chess-Bot/) or download the project and open index.html.
 
 <b>Second step:</b> <br>
     Click button "Game with AI" and make your first move. 
