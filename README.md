@@ -14,4 +14,4 @@ Just click the [link](https://mikoslaf.github.io/M_Chess-Bot/) or download the p
 
 # ⚠️
 Debug mode is enabled by default, so you can move as both sides. <br>
-When you start the game in debug mode will be disabled.
+When you start the game, debug mode will be disabled.
