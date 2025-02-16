@@ -1,3 +1,4 @@
+import { GoogleGenerativeAI } from "./node_modules/@google/generative-ai/dist/index.mjs";
 /*
 0 - nic
 1 - pion
@@ -43,7 +44,7 @@ let map_ab = { // attack black
     1: [0,0,0,0,0,0,0,0],
 }; 
 
-let AI_on = false // false
+let AI_on = true // false
 let bot_pawns = ["80","81","82","83","84","85","86","87","70","71","72","73","74","75","76","77"];
 
 let move = 1 // 1 - player, 2 - bot/black player
@@ -1249,7 +1250,7 @@ function show_options(options = [])
 
 // AI section
 
-function find_move()
+async function find_move()
 {
     let options = [] //1-10 Advancement of movement | from | to
     let global_options = []
@@ -1330,6 +1331,27 @@ function find_move()
 
     //console.table(options);
     // console.log(global_options);
+    
+    let ai_move; 
+    if(options.length > 0)
+        ai_move = await AI(map, options);
+    else 
+    ai_move = await AI(map, global_options);
+
+    if (ai_move.length > 0){
+    
+        ai_move = convert_position(map, ai_move)
+        
+        if(ai_move)
+            {
+                clicked_position = ai_move[0];
+                move_pawn(ai_move[1]);
+                return;
+            }
+        }
+    
+    console.info("Random move");
+    
     if(options.length > 0 )
         {
             let naj = options[0]
@@ -1368,4 +1390,113 @@ function is_close_pawn11(position)
                 return true;
     }
     return false; 
+}
+
+async function AI(map, possibleMoves) {
+    try {
+        // Input validation
+        const prompt = `Twój zadaniem jest grać czarnymi w szachy.
+        Szachownica jest reprezentowana jako tabela w tabeli, gdzie każdy element to liczba dwucyfrowa:
+        - Pierwsza cyfra oznacza kolor (1 - biały, 2 - czarny).
+        - Druga cyfra oznacza figurę (0 - puste, 1 - pion, 2 - goniec, 3 - skoczek, 4 - wieża, 5 - hetman, 6 - król).
+
+        Dostępne ruchy mają trzy wartości:
+        1. Siła ruchu (1-10, im wyższa, tym lepszy ruch według heurystyki).
+        2. Pozycja figury na planszy (np. [8, 1]).
+        3. Docelowa pozycja ruchu (np. [6, 0]).
+
+        Twoim zadaniem jest wybranie najlepszego ruchu i zwrócenie go w formacie [[start_x, start_y], [end_x, end_y]].
+
+        Pamiętaj o podstawowych zasadach gry w szachy, takich jak:
+        - Ruchy poszczególnych figur.
+        - Zasady bicia figur.
+        - Zasady roszady (jeśli chcesz, żeby była brana pod uwagę).
+        - Zasady pata i mata.
+
+        W przypadku remisu, wybierz pierwszy ruch z listy dostępnych ruchów.
+
+        Szachownica: ${JSON.stringify(map)}
+
+        **Wybierz JEDEN ruch WYŁĄCZNIE z poniższej listy dostępnych ruchów i zwróć go w podanym formacie.**
+        Jeśli żaden z dostępnych ruchów nie jest możliwy do wykonania (np. z powodu zasad szachów), zwróć [[0, 0], [0, 0]].
+
+        Dostępne ruchy: ${JSON.stringify(possibleMoves)}
+
+        Nie pisz dodatkowych opisów ani tekstu.
+        Odpowiedź powinna zawierać wyłącznie listę z jednym elementem, reprezentującym wybrany ruch w formacie [[start_x, start_y], [end_x, end_y]].`;
+        const apiToken = CONFIG.API_KEY
+        
+        if (!apiToken) {
+            console.error('API token not provided');
+            return false;
+        }
+        
+        // Initialize the API
+        const genAI = new GoogleGenerativeAI(apiToken);
+        const model = genAI.getGenerativeModel({ 
+            model: 'gemini-2.0-flash'
+        });
+
+        // Create chat session
+        const chat = model.startChat({
+            generationConfig: {
+                temperature: 0.7,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 2048,
+            },
+            history: [],
+        });
+
+        // Send the actual prompt
+        let response;
+        try {
+            const result = await chat.sendMessage(prompt);
+            response = await result.response;
+        } catch (error) {
+            console.error('Error sending prompt:', error.message);
+            return false;
+        }
+        return response.text().replaceAll("`","").replace("json","");
+
+    } catch (error) {
+        console.error('Error generating story:', error.message);
+        return false;
+    }
+}
+
+function convert_position(map, position)
+{
+    try{
+        position = JSON.parse(position);
+    } catch {
+        return false
+    }
+
+    let pos_from, pos_to;
+    if(typeof position == "object") {
+        pos_from = position[0].join("");
+        pos_to = position[1].join("");
+    } else {
+        pos_from = position[0];
+        pos_to = position[1];
+    }
+
+
+    if(pos_from.length != 2 || pos_to.length != 2)
+        return false
+    
+    if(pos_from[0] < 1 || pos_from[0] > 8 || pos_from[1] < 0 || pos_from[1] > 7)
+        return false
+
+    const pawn = map[parseInt(pos_from[0])][parseInt(pos_from[1])]
+    if(pawn == 0 || pawn.toString()[0] != 2)
+        return false
+
+    const target = map[parseInt(pos_to[0])][parseInt(pos_to[1])]
+
+    if (target.toString()[0] == 2)
+        return false
+    
+    return [pos_from, pos_to]
 }

@@ -1,0 +1,14 @@
+{
+  "name": "mchess_bot",
+  "version": "1.0.0",
+  "description": "I wrote this bot in Javascript, the bot analyzes the map before each movement and chooses the best option for itself.",
+  "main": "js.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mikoslaf",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  }
+}
